@@ -1,0 +1,56 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Lab assignment 4
+
+## Team
+
+*Vladyslav Vasylchenko, Max Golovin, Ostap Kostiuk*
+
+## Work distribution
+
+Vlad - 1, 2\
+Max - 3\
+Ostap - 4
+
+## Task 1
+
+### Problem Statement
+
+...
+
+### Solution
+
+...
+
+## Task 2
+
+### Problem Statement
+
+...
+
+### Solution
+
+...
+
+## Task 3
+
+### Problem Statement
+
+...
+
+### Solution
+
+...
+
+## Task 4
+
+### Problem Statement
+
+...
+
+### Solution
+
+...
