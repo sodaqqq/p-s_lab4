@@ -1,0 +1,241 @@
+---
+title: "Lab4"
+output: html_document
+date: "2025-11-29"
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Problem 1
+
+In this problem we have two independent samples $X_1,\dots,X_{100}$ and
+$Y_1,\dots,Y_{50}$, which we model as observations from normal
+distributions $X_i \sim N(\mu_1, 1)$ and $Y_j \sim N(\mu_2, 1)$.
+
+We test the hypotheses
+$H_0: \mu_1 = \mu_2 \quad \text{vs} \quad H_1: \mu_1 \neq \mu_2$ under
+known variances $\sigma_1^2 = \sigma_2^2 = 1$.
+
+The sequence $a_k$ is defined as $$
+a_k = \{ k \ln(k^2 n + \pi) \}, \quad k \ge 1,
+$$ where the fractional part of a number $x$ is defined as $$
+\{x\} = x - \lfloor x \rfloor .
+$$
+
+The data are then generated as $$
+x_k = \Phi^{-1}(a_k), \quad k = 1,\dots,100,
+$$ $$
+y_l = \Phi^{-1}(a_{l+100}), \quad l = 1,\dots,50,
+$$ where $\Phi^{-1}$ is the quantile function of the standard normal
+distribution (the `qnorm` function in R).
+
+Since the variances are known, the standard procedure is the two-sample
+Z-test for the difference of means.
+
+```{r}
+team_id <- 10
+
+a_fun <- function(k, n) {
+  x <- k * log(k^2 * n + pi)
+  x - floor(x)
+}
+
+k_max  <- 150
+a_data <- sapply(1:k_max, a_fun, n = team_id)
+
+range(a_data)
+```
+
+```{r}
+x <- qnorm(a_data[1:100])
+
+y <- qnorm(a_data[101:150])
+
+length(x); length(y)
+```
+
+We denote the sample means as $$
+\bar X = \frac{1}{n_1}\sum_{i=1}^{n_1} X_i,
+\qquad
+\bar Y = \frac{1}{n_2}\sum_{j=1}^{n_2} Y_j,
+$$ where $n_1 = 100$ and $n_2 = 50$.
+
+According to the problem assumptions, $$
+X_i \sim N(\mu_1, 1), \qquad Y_j \sim N(\mu_2, 1),
+$$ therefore $$
+\bar X \sim N\!\left(\mu_1,\; \frac{1}{n_1}\right), 
+\qquad
+\bar Y \sim N\!\left(\mu_2,\; \frac{1}{n_2}\right).
+$$
+
+Then the difference of the sample means has the distribution $$
+\bar X - \bar Y \sim
+N\!\left(\mu_1 - \mu_2,\; \frac{1}{n_1} + \frac{1}{n_2}\right).
+$$
+
+Under the null hypothesis $H_0:\mu_1 = \mu_2$ we have $$
+\bar X - \bar Y \sim
+N\!\left(0,\; \frac{1}{n_1} + \frac{1}{n_2}\right).
+$$
+
+Hence, the test statistic $$
+Z = \frac{\bar X - \bar Y}
+         {\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}}
+$$ has the standard normal distribution $N(0,1)$ when $H_0$ is true.
+
+```{r}
+n1 <- length(x)
+n2 <- length(y)
+
+x_bar <- mean(x)
+y_bar <- mean(y)
+
+n1; n2
+x_bar; y_bar
+```
+
+```{r}
+sigma1_sq <- 1
+sigma2_sq <- 1
+
+se_diff <- sqrt(sigma1_sq / n1 + sigma2_sq / n2)
+
+z_obs <- (x_bar - y_bar) / se_diff
+z_obs
+```
+
+We use a two-sided test because the alternative hypothesis is
+$H_1:\mu_1 \neq \mu_2$.
+
+The significance level is $\alpha = 0.05$.
+
+For the standard normal distribution the critical points are
+$z_{1-\alpha/2} = z_{0.975}$. The critical region is $$
+\mathrm{Cr} = \{ z : |z| > z_{1-\alpha/2} \}.
+$$
+
+```{r}
+alpha  <- 0.05
+z_crit <- qnorm(1 - alpha/2)
+z_crit
+
+abs(z_obs) > z_crit
+```
+
+If $\lvert Z_{\text{obs}}\rvert > z_{1-\alpha/2}$, we reject $H_0$.
+
+For the two-sided Z-test the p-value is computed as $$
+p\text{-value}
+= 2\bigl(1 - \Phi(\lvert Z_{\text{obs}}\rvert)\bigr),
+$$ where $\Phi$ is the cumulative distribution function of the standard
+normal distribution.
+
+```{r}
+p_value <- 2 * (1 - pnorm(abs(z_obs)))
+p_value
+```
+
+Interpretation:
+
+-   If $p\text{-value} < 0.05$, we reject $H_0$ at the significance
+    level $\alpha = 0.05$ and conclude that $\mu_1$ and $\mu_2$ are
+    statistically different.
+
+-   If $p\text{-value} \ge 0.05$, we do not reject $H_0$: the observed
+    data do not provide sufficient evidence to claim that the population
+    means are different.
+
+# Problem 2
+
+In this part we test hypotheses about the variances of two normal
+populations:
+
+$$
+H_0: \sigma_1^2 = \sigma_2^2 
+\quad \text{vs} \quad 
+H_1: \sigma_1^2 > \sigma_2^2,
+$$
+
+where $X_1,\dots,X_{n_1}$ and $Y_1,\dots,Y_{n_2}$ are the same samples
+as in Problem 1, with $n_1 = 100$, $n_2 = 50$, and the means $\mu_1$,
+$\mu_2$ are assumed to be unknown.
+
+We assume that $$
+X_i \sim N(\mu_1, \sigma_1^2), \qquad Y_j \sim N(\mu_2, \sigma_2^2),
+$$ and that the samples are independent. The standard test for comparing
+two variances of normal distributions is the **F-test**.
+
+The sample variances are defined as $$
+S_1^2 = \frac{1}{n_1-1} \sum_{i=1}^{n_1} (X_i - \bar X)^2, \qquad
+S_2^2 = \frac{1}{n_2-1} \sum_{j=1}^{n_2} (Y_j - \bar Y)^2.
+$$
+
+For normal data we know that $$
+\frac{(n_1-1)S_1^2}{\sigma_1^2} \sim \chi^2_{n_1-1},
+\qquad
+\frac{(n_2-1)S_2^2}{\sigma_2^2} \sim \chi^2_{n_2-1},
+$$ and these two chi-squared variables are independent.
+
+Under the null hypothesis $H_0:\sigma_1^2 = \sigma_2^2$ the test
+statistic $$
+F = \frac{S_1^2}{S_2^2}
+$$ has the F-distribution with $(n_1-1, n_2-1)$ degrees of freedom: $$
+F \sim F_{n_1-1,,n_2-1}.
+$$
+
+Since the alternative hypothesis is one-sided
+($\sigma_1^2 > \sigma_2^2$), the critical region for significance level
+$\alpha = 0.05$ is $$
+\mathrm{Cr} = { f : f > F_{1-\alpha}(n_1-1, n_2-1) },
+$$ where $F_{1-\alpha}(n_1-1, n_2-1)$ is the $(1-\alpha)$-quantile of
+the $F_{n_1-1,,n_2-1}$ distribution.
+
+```{r}
+s1_sq <- var(x)
+s2_sq <- var(y)
+
+s1_sq
+s2_sq
+
+F_obs <- s1_sq / s2_sq
+F_obs
+```
+
+```{r}
+alpha <- 0.05
+
+F_crit <- qf(1 - alpha, df1 = n1 - 1, df2 = n2 - 1)
+F_crit
+
+F_obs > F_crit
+```
+
+If $F_obs \> F_crit$, we reject $H_0$ at the significance level
+$\alpha = 0.05$. Otherwise, we do not reject $H_0$.
+
+For the one-sided test $H_1:\sigma_1^2 > \sigma_2^2$ the p-value is $$
+p\text{-value}
+= P\bigl(F_{n_1-1,,n_2-1} \ge F_{\text{obs}}\bigr)
+= 1 - F_F(F_{\text{obs}}),
+$$ where $F_F$ is the cumulative distribution function of the
+F-distribution.
+
+```{r}
+p_value_F <- 1 - pf(F_obs, df1 = n1 - 1, df2 = n2 - 1)
+p_value_F
+```
+
+Interpretation:
+
+• If $p\text{-value} < 0.05$, we reject $H_0$ at the significance level
+$\alpha = 0.05$ and conclude that the variance of the first population
+is significantly larger than the variance of the second population.
+
+• If $p\text{-value} \ge 0.05$, we do not reject $H_0$. In this case,
+the observed data do not provide sufficient evidence to claim that
+$\sigma_1^2 > \sigma_2^2$.
