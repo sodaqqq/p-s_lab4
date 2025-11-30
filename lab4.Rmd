@@ -249,15 +249,91 @@ the observed data do not provide sufficient evidence to claim that
 $\sigma_1^2 > \sigma_2^2$.
 
 ## Task 3
+The problem asks to check distribution properties of the generated samples using the Kolmogorov–Smirnov (KS) test.\
 
-### Problem Statement
+The Kolmogorov–Smirnov test is a non-parametric test used to determine if a sample comes from a specific distribution (one-sample KS test) or if two samples come from the same distribution (two-sample KS test).\
+The test is based on the Empirical Cumulative Distribution Function.\
+One-Sample: The KS test statistic, $D$, measures the maximum absolute difference between the ECDF of the sample, $F_n(t)$, and the hypothesized theoretical Cumulative Distribution Function (CDF), $F(t)$.$$D = \sup_t |F_n(t) - F(t)|$$\
+Two-Sample: The KS test statistic, $D$, measures the maximum absolute difference between the ECDFs of the two samples, $F_{n_1}(t)$ and $F_{n_2}(t)$.$$D = \sup_t |F_{n_1}(t) - F_{n_2}(t)|$$\
+A large value of $D$ suggests a poor fit or different underlying distributions. The test rejects the null hypothesis ($H_0$) if the $D$ statistic exceeds a critical value $C$ (based on the sample size(s) and significance level $\alpha$), or, equivalently, if the $p$-value is less than $\alpha$.\
+The function $a_k = \{k \ln (k^{2n} + \pi)\}$ generates a sequence in $(0, 1)$ that approximates a uniform $U(0, 1)$ distribution. Applying $\Phi^{-1}$ (the qnorm function) transforms this uniform sequence into a sequence that approximates a standard normal $N(0, 1)$ distribution.\
 
-...
+For a significance level $\alpha=0.05$, the rejection rule is:$$\text{Reject } H_0 \text{ if } D > C, \quad \text{or, equivalently, if } p\text{-value} < 0.05$$Where $D$ is the KS test statistic (the maximum absolute difference between the ECDFs) and $C$ is the critical value for the specified $\alpha$.\
+```{r}
+n <- 10
+set.seed(n)
+k_values <- 1:150
 
-### Solution
+a_k_full <- (k_values * log(k_values^(2*n) + pi)) %% 1
 
-...
+a_x <- a_k_full[1:100]
+a_y <- a_k_full[101:150]
 
+x <- qnorm(a_x)
+y <- qnorm(a_y)
+```
+
+a)\
+Task: Check if $\{x_k\}_{k=1}^{100}$ are normally distributed (with parameters calculated from the sample).\
+I used Kolmogorov–Smirnov test to compare an empirical distribution function (EDF) against a specified theoretical distribution function (CDF).\
+Hypotheses\
+$H_0$: $\{x_k\}$ follows a Normal distribution $N(\mu, \sigma^2)$ where $\mu$ and $\sigma$ are the sample mean and standard deviation.\
+$H_1$: $\{x_k\}$ does not follow this Normal distribution.\
+
+```{r}
+sample_mean_x <- mean(x)
+sample_sd_x <- sd(x)
+cat("Sample Mean of x:", sample_mean_x, "\n")
+cat("Sample SD of x:", sample_sd_x, "\n")
+```
+
+```{r}
+ks_test_a <- ks.test(x, "pnorm", mean = sample_mean_x, sd = sample_sd_x)
+print(ks_test_a)
+```
+Since our p-value(0.8402) is > 0.05, we can't reject $H_0$\
+The generated $x_k$ values are derived directly from the standard normal CDF inverse ($\Phi^{-1}$) applied to a $U(0, 1)$ sequence. Thus, the data is by construction an excellent approximation of a standard normal distribution. The high $p$-value confirms that the observed deviations from the normal CDF are well within the range expected by chance if $H_0$ were true.\
+
+b)
+Task: Check if $\{|x_k|\}_{k=1}^{100}$ are exponentially distributed with $\lambda = 1$.\
+I used Kolmogorov–Smirnov test to compare the EDF of the sample $\mathbf{|x|}$ against the fixed theoretical $\text{Exp}(\lambda=1)$ CDF.\
+$H_0$: $\{|x_k|\}$ follows an $\text{Exp}(\lambda=1)$ distribution (mean $= 1$).\
+$H_1$: $\{|x_k|\}$ does not follow this Exponential distribution.\
+
+```{r}
+abs_x <- abs(x)
+sample_mean_abs_x <- mean(abs_x)
+cat("Sample Mean of |x|:", sample_mean_abs_x, "\n")
+```
+
+```{r}
+ks_test_b <- ks.test(abs_x, "pexp", rate = 1)
+print(ks_test_b)
+```
+Since our p-value(0.09886) is > 0.05, we can't reject $H_0$\
+The sample $\mathbf{|x|}$ comes from the absolute values of a standard normal distribution. We conclude there is insufficient evidence at the $\alpha=0.05$ level to say the data is not Exponential with $\lambda=1$.\
+
+c)
+Task: Check if $\{x_k\}_{k=1}^{100}$ and $\{y_l\}_{l=1}^{50}$ have the same distributions.\
+I used Kolmogorov–Smirnov test to compare the EDFs of two independent samples ($\mathbf{x}$ and $\mathbf{y}$) to determine if they originate from the same underlying continuous distribution.\
+$H_0$: $\{x_k\}$ and $\{y_l\}$ are drawn from the same continuous distribution.\
+$H_1$: $\{x_k\}$ and $\{y_l\}$ are drawn from different continuous distributions.\
+
+```{r}
+sample_mean_y <- mean(y)
+sample_sd_y <- sd(y)
+cat("Sample Mean of x:", sample_mean_x, "\n")
+cat("Sample Mean of y:", sample_mean_y, "\n")
+cat("Sample SD of x:", sample_sd_x, "\n")
+cat("Sample SD of y:", sample_sd_y, "\n")
+```
+
+```{r}
+ks_test_c <- ks.test(x, y)
+print(ks_test_c)
+```
+Since our p-value(0.4287) is > 0.05, we can't reject $H_0$\
+Both samples $\mathbf{x}$ and $\mathbf{y}$ are generated using the exact same $\Phi^{-1}$ transformation applied to non-overlapping segments of the same underlying pseudo-random sequence $\{a_k\}$. Therefore, they are drawn from the same underlying theoretical distribution (Standard Normal). The two-sample KS test correctly concludes that the small differences between the samples are likely due to sampling variability and not a fundamental difference in their underlying distributions.\
 ## Task 4
 
 ### Problem Statement

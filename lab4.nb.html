@@ -1763,9 +1763,539 @@ display: none;
 <p>Vlad - 1, 2<br />
 Max - 3<br />
 Ostap - 4</p>
+<!-- rnb-text-end -->
+<!-- rnb-text-begin -->
 </div>
-<div id="task-1" class="section level2">
-<h2>Task 1</h2>
+</div>
+<div id="problem-1" class="section level1">
+<h1>Problem 1</h1>
+<p>In this problem we have two independent samples <span class="math inline">\(X_1,\dots,X_{100}\)</span> and <span class="math inline">\(Y_1,\dots,Y_{50}\)</span>, which we model as
+observations from normal distributions <span class="math inline">\(X_i
+\sim N(\mu_1, 1)\)</span> and <span class="math inline">\(Y_j \sim
+N(\mu_2, 1)\)</span>.</p>
+<p>We test the hypotheses <span class="math inline">\(H_0: \mu_1 = \mu_2
+\quad \text{vs} \quad H_1: \mu_1 \neq \mu_2\)</span> under known
+variances <span class="math inline">\(\sigma_1^2 = \sigma_2^2 =
+1\)</span>.</p>
+<p>The sequence <span class="math inline">\(a_k\)</span> is defined as
+<span class="math display">\[
+a_k = \{ k \ln(k^2 n + \pi) \}, \quad k \ge 1,
+\]</span> where the fractional part of a number <span class="math inline">\(x\)</span> is defined as <span class="math display">\[
+\{x\} = x - \lfloor x \rfloor .
+\]</span></p>
+<p>The data are then generated as <span class="math display">\[
+x_k = \Phi^{-1}(a_k), \quad k = 1,\dots,100,
+\]</span> <span class="math display">\[
+y_l = \Phi^{-1}(a_{l+100}), \quad l = 1,\dots,50,
+\]</span> where <span class="math inline">\(\Phi^{-1}\)</span> is the
+quantile function of the standard normal distribution (the
+<code>qnorm</code> function in R).</p>
+<p>Since the variances are known, the standard procedure is the
+two-sample Z-test for the difference of means.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbInRlYW1faWQgPC0gMTAiLCIiLCJhX2Z1biA8LSBmdW5jdGlvbihrLCBuKSB7XG4gIHggPC0gayAqIGxvZyhrXjIgKiBuICsgcGkpXG4gIHggLSBmbG9vcih4KVxufSIsIiIsImtfbWF4ICA8LSAxNTAiLCJhX2RhdGEgPC0gc2FwcGx5KDE6a19tYXgsIGFfZnVuLCBuID0gdGVhbV9pZCkiLCIiLCJyYW5nZShhX2RhdGEpIl19 -->
+<pre class="r"><code>team_id &lt;- 10
+
+a_fun &lt;- function(k, n) {
+  x &lt;- k * log(k^2 * n + pi)
+  x - floor(x)
+}
+
+k_max  &lt;- 150
+a_data &lt;- sapply(1:k_max, a_fun, n = team_id)
+
+range(a_data)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDAzMzE5ODExIDAuOTg5NDUyMDM2XG4ifQ== -->
+<pre><code>[1] 0.003319811 0.989452036</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbInggPC0gcW5vcm0oYV9kYXRhWzE6MTAwXSkiLCIiLCJ5IDwtIHFub3JtKGFfZGF0YVsxMDE6MTUwXSkiLCIiLCJsZW5ndGgoeCk7IGxlbmd0aCh5KSJdfQ== -->
+<pre class="r"><code>x &lt;- qnorm(a_data[1:100])
+
+y &lt;- qnorm(a_data[101:150])
+
+length(x); length(y)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDEwMFxuIn0= -->
+<pre><code>[1] 100</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDUwXG4ifQ== -->
+<pre><code>[1] 50</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We denote the sample means as <span class="math display">\[
+\bar X = \frac{1}{n_1}\sum_{i=1}^{n_1} X_i,
+\qquad
+\bar Y = \frac{1}{n_2}\sum_{j=1}^{n_2} Y_j,
+\]</span> where <span class="math inline">\(n_1 = 100\)</span> and <span class="math inline">\(n_2 = 50\)</span>.</p>
+<p>According to the problem assumptions, <span class="math display">\[
+X_i \sim N(\mu_1, 1), \qquad Y_j \sim N(\mu_2, 1),
+\]</span> therefore <span class="math display">\[
+\bar X \sim N\!\left(\mu_1,\; \frac{1}{n_1}\right),
+\qquad
+\bar Y \sim N\!\left(\mu_2,\; \frac{1}{n_2}\right).
+\]</span></p>
+<p>Then the difference of the sample means has the distribution <span class="math display">\[
+\bar X - \bar Y \sim
+N\!\left(\mu_1 - \mu_2,\; \frac{1}{n_1} + \frac{1}{n_2}\right).
+\]</span></p>
+<p>Under the null hypothesis <span class="math inline">\(H_0:\mu_1 =
+\mu_2\)</span> we have <span class="math display">\[
+\bar X - \bar Y \sim
+N\!\left(0,\; \frac{1}{n_1} + \frac{1}{n_2}\right).
+\]</span></p>
+<p>Hence, the test statistic <span class="math display">\[
+Z = \frac{\bar X - \bar Y}
+         {\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}}
+\]</span> has the standard normal distribution <span class="math inline">\(N(0,1)\)</span> when <span class="math inline">\(H_0\)</span> is true.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbIm4xIDwtIGxlbmd0aCh4KSIsIm4yIDwtIGxlbmd0aCh5KSIsIiIsInhfYmFyIDwtIG1lYW4oeCkiLCJ5X2JhciA8LSBtZWFuKHkpIiwiIiwibjE7IG4yIl19 -->
+<pre class="r"><code>n1 &lt;- length(x)
+n2 &lt;- length(y)
+
+x_bar &lt;- mean(x)
+y_bar &lt;- mean(y)
+
+n1; n2</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDEwMFxuIn0= -->
+<pre><code>[1] 100</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDUwXG4ifQ== -->
+<pre><code>[1] 50</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoieF9iYXI7IHlfYmFyIn0= -->
+<pre class="r"><code>x_bar; y_bar</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0wLjA2NzA1MDE5XG4ifQ== -->
+<pre><code>[1] -0.06705019</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDkuOTg2Nzc4ZS0wNVxuIn0= -->
+<pre><code>[1] 9.986778e-05</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbInNpZ21hMV9zcSA8LSAxIiwic2lnbWEyX3NxIDwtIDEiLCIiLCJzZV9kaWZmIDwtIHNxcnQoc2lnbWExX3NxIC8gbjEgKyBzaWdtYTJfc3EgLyBuMikiLCIiLCJ6X29icyA8LSAoeF9iYXIgLSB5X2JhcikgLyBzZV9kaWZmIiwiel9vYnMiXX0= -->
+<pre class="r"><code>sigma1_sq &lt;- 1
+sigma2_sq &lt;- 1
+
+se_diff &lt;- sqrt(sigma1_sq / n1 + sigma2_sq / n2)
+
+z_obs &lt;- (x_bar - y_bar) / se_diff
+z_obs</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0wLjM4NzY5MVxuIn0= -->
+<pre><code>[1] -0.387691</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We use a two-sided test because the alternative hypothesis is <span class="math inline">\(H_1:\mu_1 \neq \mu_2\)</span>.</p>
+<p>The significance level is <span class="math inline">\(\alpha =
+0.05\)</span>.</p>
+<p>For the standard normal distribution the critical points are <span class="math inline">\(z_{1-\alpha/2} = z_{0.975}\)</span>. The critical
+region is <span class="math display">\[
+\mathrm{Cr} = \{ z : |z| &gt; z_{1-\alpha/2} \}.
+\]</span></p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbImFscGhhICA8LSAwLjA1Iiwiel9jcml0IDwtIHFub3JtKDEgLSBhbHBoYS8yKSIsInpfY3JpdCJdfQ== -->
+<pre class="r"><code>alpha  &lt;- 0.05
+z_crit &lt;- qnorm(1 - alpha/2)
+z_crit</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDEuOTU5OTY0XG4ifQ== -->
+<pre><code>[1] 1.959964</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYWJzKHpfb2JzKSA+IHpfY3JpdCJ9 -->
+<pre class="r"><code>abs(z_obs) &gt; z_crit</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIEZBTFNFXG4ifQ== -->
+<pre><code>[1] FALSE</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>If <span class="math inline">\(\lvert Z_{\text{obs}}\rvert &gt;
+z_{1-\alpha/2}\)</span>, we reject <span class="math inline">\(H_0\)</span>.</p>
+<p>For the two-sided Z-test the p-value is computed as <span class="math display">\[
+p\text{-value}
+= 2\bigl(1 - \Phi(\lvert Z_{\text{obs}}\rvert)\bigr),
+\]</span> where <span class="math inline">\(\Phi\)</span> is the
+cumulative distribution function of the standard normal
+distribution.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbInBfdmFsdWUgPC0gMiAqICgxIC0gcG5vcm0oYWJzKHpfb2JzKSkpIiwicF92YWx1ZSJdfQ== -->
+<pre class="r"><code>p_value &lt;- 2 * (1 - pnorm(abs(z_obs)))
+p_value</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuNjk4MjQ0N1xuIn0= -->
+<pre><code>[1] 0.6982447</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Interpretation:</p>
+<ul>
+<li><p>If <span class="math inline">\(p\text{-value} &lt; 0.05\)</span>,
+we reject <span class="math inline">\(H_0\)</span> at the significance
+level <span class="math inline">\(\alpha = 0.05\)</span> and conclude
+that <span class="math inline">\(\mu_1\)</span> and <span class="math inline">\(\mu_2\)</span> are statistically
+different.</p></li>
+<li><p>If <span class="math inline">\(p\text{-value} \ge 0.05\)</span>,
+we do not reject <span class="math inline">\(H_0\)</span>: the observed
+data do not provide sufficient evidence to claim that the population
+means are different.</p></li>
+</ul>
+</div>
+<div id="problem-2" class="section level1">
+<h1>Problem 2</h1>
+<p>In this part we test hypotheses about the variances of two normal
+populations:</p>
+<p><span class="math display">\[
+H_0: \sigma_1^2 = \sigma_2^2
+\quad \text{vs} \quad
+H_1: \sigma_1^2 &gt; \sigma_2^2,
+\]</span></p>
+<p>where <span class="math inline">\(X_1,\dots,X_{n_1}\)</span> and
+<span class="math inline">\(Y_1,\dots,Y_{n_2}\)</span> are the same
+samples as in Problem 1, with <span class="math inline">\(n_1 =
+100\)</span>, <span class="math inline">\(n_2 = 50\)</span>, and the
+means <span class="math inline">\(\mu_1\)</span>, <span class="math inline">\(\mu_2\)</span> are assumed to be unknown.</p>
+<p>We assume that <span class="math display">\[
+X_i \sim N(\mu_1, \sigma_1^2), \qquad Y_j \sim N(\mu_2, \sigma_2^2),
+\]</span> and that the samples are independent. The standard test for
+comparing two variances of normal distributions is the
+<strong>F-test</strong>.</p>
+<p>The sample variances are defined as <span class="math display">\[
+S_1^2 = \frac{1}{n_1-1} \sum_{i=1}^{n_1} (X_i - \bar X)^2, \qquad
+S_2^2 = \frac{1}{n_2-1} \sum_{j=1}^{n_2} (Y_j - \bar Y)^2.
+\]</span></p>
+<p>For normal data we know that <span class="math display">\[
+\frac{(n_1-1)S_1^2}{\sigma_1^2} \sim \chi^2_{n_1-1},
+\qquad
+\frac{(n_2-1)S_2^2}{\sigma_2^2} \sim \chi^2_{n_2-1},
+\]</span> and these two chi-squared variables are independent.</p>
+<p>Under the null hypothesis <span class="math inline">\(H_0:\sigma_1^2
+= \sigma_2^2\)</span> the test statistic <span class="math display">\[
+F = \frac{S_1^2}{S_2^2}
+\]</span> has the F-distribution with <span class="math inline">\((n_1-1, n_2-1)\)</span> degrees of freedom: <span class="math display">\[
+F \sim F_{n_1-1,,n_2-1}.
+\]</span></p>
+<p>Since the alternative hypothesis is one-sided (<span class="math inline">\(\sigma_1^2 &gt; \sigma_2^2\)</span>), the critical
+region for significance level <span class="math inline">\(\alpha =
+0.05\)</span> is <span class="math display">\[
+\mathrm{Cr} = { f : f &gt; F_{1-\alpha}(n_1-1, n_2-1) },
+\]</span> where <span class="math inline">\(F_{1-\alpha}(n_1-1,
+n_2-1)\)</span> is the <span class="math inline">\((1-\alpha)\)</span>-quantile of the <span class="math inline">\(F_{n_1-1,,n_2-1}\)</span> distribution.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbInMxX3NxIDwtIHZhcih4KSIsInMyX3NxIDwtIHZhcih5KSIsIiIsInMxX3NxIl19 -->
+<pre class="r"><code>s1_sq &lt;- var(x)
+s2_sq &lt;- var(y)
+
+s1_sq</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuODAxMzQzM1xuIn0= -->
+<pre><code>[1] 0.8013433</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiczJfc3EifQ== -->
+<pre class="r"><code>s2_sq</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDEuMjE2OTg2XG4ifQ== -->
+<pre><code>[1] 1.216986</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjpbIkZfb2JzIDwtIHMxX3NxIC8gczJfc3EiLCJGX29icyJdfQ== -->
+<pre class="r"><code>F_obs &lt;- s1_sq / s2_sq
+F_obs</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuNjU4NDY1M1xuIn0= -->
+<pre><code>[1] 0.6584653</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbImFscGhhIDwtIDAuMDUiLCIiLCJGX2NyaXQgPC0gcWYoMSAtIGFscGhhLCBkZjEgPSBuMSAtIDEsIGRmMiA9IG4yIC0gMSkiLCJGX2NyaXQiXX0= -->
+<pre class="r"><code>alpha &lt;- 0.05
+
+F_crit &lt;- qf(1 - alpha, df1 = n1 - 1, df2 = n2 - 1)
+F_crit</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDEuNTMwOTk5XG4ifQ== -->
+<pre><code>[1] 1.530999</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiRl9vYnMgPiBGX2NyaXQifQ== -->
+<pre class="r"><code>F_obs &gt; F_crit</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIEZBTFNFXG4ifQ== -->
+<pre><code>[1] FALSE</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>If <span class="math inline">\(F_obs \&gt; F_crit\)</span>, we reject
+<span class="math inline">\(H_0\)</span> at the significance level <span class="math inline">\(\alpha = 0.05\)</span>. Otherwise, we do not
+reject <span class="math inline">\(H_0\)</span>.</p>
+<p>For the one-sided test <span class="math inline">\(H_1:\sigma_1^2
+&gt; \sigma_2^2\)</span> the p-value is <span class="math display">\[
+p\text{-value}
+= P\bigl(F_{n_1-1,,n_2-1} \ge F_{\text{obs}}\bigr)
+= 1 - F_F(F_{\text{obs}}),
+\]</span> where <span class="math inline">\(F_F\)</span> is the
+cumulative distribution function of the F-distribution.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbInBfdmFsdWVfRiA8LSAxIC0gcGYoRl9vYnMsIGRmMSA9IG4xIC0gMSwgZGYyID0gbjIgLSAxKSIsInBfdmFsdWVfRiJdfQ== -->
+<pre class="r"><code>p_value_F &lt;- 1 - pf(F_obs, df1 = n1 - 1, df2 = n2 - 1)
+p_value_F</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuOTU5Nzc0NVxuIn0= -->
+<pre><code>[1] 0.9597745</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Interpretation:</p>
+<p>• If <span class="math inline">\(p\text{-value} &lt; 0.05\)</span>,
+we reject <span class="math inline">\(H_0\)</span> at the significance
+level <span class="math inline">\(\alpha = 0.05\)</span> and conclude
+that the variance of the first population is significantly larger than
+the variance of the second population.</p>
+<p>• If <span class="math inline">\(p\text{-value} \ge 0.05\)</span>, we
+do not reject <span class="math inline">\(H_0\)</span>. In this case,
+the observed data do not provide sufficient evidence to claim that <span class="math inline">\(\sigma_1^2 &gt; \sigma_2^2\)</span>.</p>
+<div id="task-3" class="section level2">
+<h2>Task 3</h2>
+<p>The problem asks to check distribution properties of the generated
+samples using the Kolmogorov–Smirnov (KS) test.<br />
+</p>
+<p>The Kolmogorov–Smirnov test is a non-parametric test used to
+determine if a sample comes from a specific distribution (one-sample KS
+test) or if two samples come from the same distribution (two-sample KS
+test).<br />
+The test is based on the Empirical Cumulative Distribution
+Function.<br />
+One-Sample: The KS test statistic, <span class="math inline">\(D\)</span>, measures the maximum absolute
+difference between the ECDF of the sample, <span class="math inline">\(F_n(t)\)</span>, and the hypothesized theoretical
+Cumulative Distribution Function (CDF), <span class="math inline">\(F(t)\)</span>.<span class="math display">\[D =
+\sup_t |F_n(t) - F(t)|\]</span><br />
+Two-Sample: The KS test statistic, <span class="math inline">\(D\)</span>, measures the maximum absolute
+difference between the ECDFs of the two samples, <span class="math inline">\(F_{n_1}(t)\)</span> and <span class="math inline">\(F_{n_2}(t)\)</span>.<span class="math display">\[D
+= \sup_t |F_{n_1}(t) - F_{n_2}(t)|\]</span><br />
+A large value of <span class="math inline">\(D\)</span> suggests a poor
+fit or different underlying distributions. The test rejects the null
+hypothesis (<span class="math inline">\(H_0\)</span>) if the <span class="math inline">\(D\)</span> statistic exceeds a critical value
+<span class="math inline">\(C\)</span> (based on the sample size(s) and
+significance level <span class="math inline">\(\alpha\)</span>), or,
+equivalently, if the <span class="math inline">\(p\)</span>-value is
+less than <span class="math inline">\(\alpha\)</span>.<br />
+The function <span class="math inline">\(a_k = \{k \ln (k^{2n} +
+\pi)\}\)</span> generates a sequence in <span class="math inline">\((0,
+1)\)</span> that approximates a uniform <span class="math inline">\(U(0,
+1)\)</span> distribution. Applying <span class="math inline">\(\Phi^{-1}\)</span> (the qnorm function) transforms
+this uniform sequence into a sequence that approximates a standard
+normal <span class="math inline">\(N(0, 1)\)</span> distribution.<br />
+</p>
+<p>For a significance level <span class="math inline">\(\alpha=0.05\)</span>, the rejection rule is:<span class="math display">\[\text{Reject } H_0 \text{ if } D &gt; C, \quad
+\text{or, equivalently, if } p\text{-value} &lt; 0.05\]</span>Where
+<span class="math inline">\(D\)</span> is the KS test statistic (the
+maximum absolute difference between the ECDFs) and <span class="math inline">\(C\)</span> is the critical value for the specified
+<span class="math inline">\(\alpha\)</span>.<br />
+</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbIm4gPC0gMTAiLCJzZXQuc2VlZChuKSIsImtfdmFsdWVzIDwtIDE6MTUwIiwiIiwiYV9rX2Z1bGwgPC0gKGtfdmFsdWVzICogbG9nKGtfdmFsdWVzXigyKm4pICsgcGkpKSAlJSAxIiwiIiwiYV94IDwtIGFfa19mdWxsWzE6MTAwXSIsImFfeSA8LSBhX2tfZnVsbFsxMDE6MTUwXSIsIiIsInggPC0gcW5vcm0oYV94KSIsInkgPC0gcW5vcm0oYV95KSJdfQ== -->
+<pre class="r"><code>n &lt;- 10
+set.seed(n)
+k_values &lt;- 1:150
+
+a_k_full &lt;- (k_values * log(k_values^(2*n) + pi)) %% 1
+
+a_x &lt;- a_k_full[1:100]
+a_y &lt;- a_k_full[101:150]
+
+x &lt;- qnorm(a_x)
+y &lt;- qnorm(a_y)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>a)<br />
+Task: Check if <span class="math inline">\(\{x_k\}_{k=1}^{100}\)</span>
+are normally distributed (with parameters calculated from the
+sample).<br />
+I used Kolmogorov–Smirnov test to compare an empirical distribution
+function (EDF) against a specified theoretical distribution function
+(CDF).<br />
+Hypotheses<br />
+<span class="math inline">\(H_0\)</span>: <span class="math inline">\(\{x_k\}\)</span> follows a Normal distribution
+<span class="math inline">\(N(\mu, \sigma^2)\)</span> where <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span> are the sample mean and standard
+deviation.<br />
+<span class="math inline">\(H_1\)</span>: <span class="math inline">\(\{x_k\}\)</span> does not follow this Normal
+distribution.<br />
+</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbInNhbXBsZV9tZWFuX3ggPC0gbWVhbih4KSIsInNhbXBsZV9zZF94IDwtIHNkKHgpIiwiY2F0KFwiU2FtcGxlIE1lYW4gb2YgeDpcIiwgc2FtcGxlX21lYW5feCwgXCJcXG5cIikiXX0= -->
+<pre class="r"><code>sample_mean_x &lt;- mean(x)
+sample_sd_x &lt;- sd(x)
+cat(&quot;Sample Mean of x:&quot;, sample_mean_x, &quot;\n&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiU2FtcGxlIE1lYW4gb2YgeDogLTAuMjQzNzM0OSBcbiJ9 -->
+<pre><code>Sample Mean of x: -0.2437349 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiY2F0KFwiU2FtcGxlIFNEIG9mIHg6XCIsIHNhbXBsZV9zZF94LCBcIlxcblwiKSJ9 -->
+<pre class="r"><code>cat(&quot;Sample SD of x:&quot;, sample_sd_x, &quot;\n&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiU2FtcGxlIFNEIG9mIHg6IDEuMDI0MzkgXG4ifQ== -->
+<pre><code>Sample SD of x: 1.02439 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbImtzX3Rlc3RfYSA8LSBrcy50ZXN0KHgsIFwicG5vcm1cIiwgbWVhbiA9IHNhbXBsZV9tZWFuX3gsIHNkID0gc2FtcGxlX3NkX3gpIiwicHJpbnQoa3NfdGVzdF9hKSJdfQ== -->
+<pre class="r"><code>ks_test_a &lt;- ks.test(x, &quot;pnorm&quot;, mean = sample_mean_x, sd = sample_sd_x)
+print(ks_test_a)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5cdEFzeW1wdG90aWMgb25lLXNhbXBsZSBLb2xtb2dvcm92LVNtaXJub3YgdGVzdFxuXG5kYXRhOiAgeFxuRCA9IDAuMDYxNzU2LCBwLXZhbHVlID0gMC44NDAyXG5hbHRlcm5hdGl2ZSBoeXBvdGhlc2lzOiB0d28tc2lkZWRcbiJ9 -->
+<pre><code>
+    Asymptotic one-sample Kolmogorov-Smirnov test
+
+data:  x
+D = 0.061756, p-value = 0.8402
+alternative hypothesis: two-sided</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Since our p-value(0.8402) is &gt; 0.05, we can’t reject <span class="math inline">\(H_0\)</span><br />
+The generated <span class="math inline">\(x_k\)</span> values are
+derived directly from the standard normal CDF inverse (<span class="math inline">\(\Phi^{-1}\)</span>) applied to a <span class="math inline">\(U(0, 1)\)</span> sequence. Thus, the data is by
+construction an excellent approximation of a standard normal
+distribution. The high <span class="math inline">\(p\)</span>-value
+confirms that the observed deviations from the normal CDF are well
+within the range expected by chance if <span class="math inline">\(H_0\)</span> were true.<br />
+</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Task: Check if <span class="math inline">\(\{|x_k|\}_{k=1}^{100}\)</span> are exponentially
+distributed with <span class="math inline">\(\lambda = 1\)</span>.<br />
+I used Kolmogorov–Smirnov test to compare the EDF of the sample <span class="math inline">\(\mathbf{|x|}\)</span> against the fixed
+theoretical <span class="math inline">\(\text{Exp}(\lambda=1)\)</span>
+CDF.<br />
+<span class="math inline">\(H_0\)</span>: <span class="math inline">\(\{|x_k|\}\)</span> follows an <span class="math inline">\(\text{Exp}(\lambda=1)\)</span> distribution (mean
+<span class="math inline">\(= 1\)</span>).<br />
+<span class="math inline">\(H_1\)</span>: <span class="math inline">\(\{|x_k|\}\)</span> does not follow this
+Exponential distribution.<br />
+</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbImFic194IDwtIGFicyh4KSIsInNhbXBsZV9tZWFuX2Fic194IDwtIG1lYW4oYWJzX3gpIiwiY2F0KFwiU2FtcGxlIE1lYW4gb2YgfHh8OlwiLCBzYW1wbGVfbWVhbl9hYnNfeCwgXCJcXG5cIikiXX0= -->
+<pre class="r"><code>abs_x &lt;- abs(x)
+sample_mean_abs_x &lt;- mean(abs_x)
+cat(&quot;Sample Mean of |x|:&quot;, sample_mean_abs_x, &quot;\n&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiU2FtcGxlIE1lYW4gb2YgfHh8OiAwLjgxMzcwNjUgXG4ifQ== -->
+<pre><code>Sample Mean of |x|: 0.8137065 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbImtzX3Rlc3RfYiA8LSBrcy50ZXN0KGFic194LCBcInBleHBcIiwgcmF0ZSA9IDEpIiwicHJpbnQoa3NfdGVzdF9iKSJdfQ== -->
+<pre class="r"><code>ks_test_b &lt;- ks.test(abs_x, &quot;pexp&quot;, rate = 1)
+print(ks_test_b)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5cdEFzeW1wdG90aWMgb25lLXNhbXBsZSBLb2xtb2dvcm92LVNtaXJub3YgdGVzdFxuXG5kYXRhOiAgYWJzX3hcbkQgPSAwLjEwNDQ1LCBwLXZhbHVlID0gMC4yMjUzXG5hbHRlcm5hdGl2ZSBoeXBvdGhlc2lzOiB0d28tc2lkZWRcbiJ9 -->
+<pre><code>
+    Asymptotic one-sample Kolmogorov-Smirnov test
+
+data:  abs_x
+D = 0.10445, p-value = 0.2253
+alternative hypothesis: two-sided</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Since our p-value(0.09886) is &gt; 0.05, we can’t reject <span class="math inline">\(H_0\)</span><br />
+The sample <span class="math inline">\(\mathbf{|x|}\)</span> comes from
+the absolute values of a standard normal distribution. We conclude there
+is insufficient evidence at the <span class="math inline">\(\alpha=0.05\)</span> level to say the data is not
+Exponential with <span class="math inline">\(\lambda=1\)</span>.<br />
+</p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Task: Check if <span class="math inline">\(\{x_k\}_{k=1}^{100}\)</span> and <span class="math inline">\(\{y_l\}_{l=1}^{50}\)</span> have the same
+distributions.<br />
+I used Kolmogorov–Smirnov test to compare the EDFs of two independent
+samples (<span class="math inline">\(\mathbf{x}\)</span> and <span class="math inline">\(\mathbf{y}\)</span>) to determine if they
+originate from the same underlying continuous distribution.<br />
+<span class="math inline">\(H_0\)</span>: <span class="math inline">\(\{x_k\}\)</span> and <span class="math inline">\(\{y_l\}\)</span> are drawn from the same
+continuous distribution.<br />
+<span class="math inline">\(H_1\)</span>: <span class="math inline">\(\{x_k\}\)</span> and <span class="math inline">\(\{y_l\}\)</span> are drawn from different
+continuous distributions.<br />
+</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbInNhbXBsZV9tZWFuX3kgPC0gbWVhbih5KSIsInNhbXBsZV9zZF95IDwtIHNkKHkpIiwiY2F0KFwiU2FtcGxlIE1lYW4gb2YgeDpcIiwgc2FtcGxlX21lYW5feCwgXCJcXG5cIikiXX0= -->
+<pre class="r"><code>sample_mean_y &lt;- mean(y)
+sample_sd_y &lt;- sd(y)
+cat(&quot;Sample Mean of x:&quot;, sample_mean_x, &quot;\n&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiU2FtcGxlIE1lYW4gb2YgeDogLTAuMjQzNzM0OSBcbiJ9 -->
+<pre><code>Sample Mean of x: -0.2437349 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiY2F0KFwiU2FtcGxlIE1lYW4gb2YgeTpcIiwgc2FtcGxlX21lYW5feSwgXCJcXG5cIikifQ== -->
+<pre class="r"><code>cat(&quot;Sample Mean of y:&quot;, sample_mean_y, &quot;\n&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiU2FtcGxlIE1lYW4gb2YgeTogMC4wMzcyNzg4NSBcbiJ9 -->
+<pre><code>Sample Mean of y: 0.03727885 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiY2F0KFwiU2FtcGxlIFNEIG9mIHg6XCIsIHNhbXBsZV9zZF94LCBcIlxcblwiKSJ9 -->
+<pre class="r"><code>cat(&quot;Sample SD of x:&quot;, sample_sd_x, &quot;\n&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiU2FtcGxlIFNEIG9mIHg6IDEuMDI0MzkgXG4ifQ== -->
+<pre><code>Sample SD of x: 1.02439 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiY2F0KFwiU2FtcGxlIFNEIG9mIHk6XCIsIHNhbXBsZV9zZF95LCBcIlxcblwiKSJ9 -->
+<pre class="r"><code>cat(&quot;Sample SD of y:&quot;, sample_sd_y, &quot;\n&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiU2FtcGxlIFNEIG9mIHk6IDAuOTAxMjc2MiBcbiJ9 -->
+<pre><code>Sample SD of y: 0.9012762 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbImtzX3Rlc3RfYyA8LSBrcy50ZXN0KHgsIHkpIiwicHJpbnQoa3NfdGVzdF9jKSJdfQ== -->
+<pre class="r"><code>ks_test_c &lt;- ks.test(x, y)
+print(ks_test_c)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5cdEV4YWN0IHR3by1zYW1wbGUgS29sbW9nb3Jvdi1TbWlybm92IHRlc3RcblxuZGF0YTogIHggYW5kIHlcbkQgPSAwLjE3LCBwLXZhbHVlID0gMC4yODExXG5hbHRlcm5hdGl2ZSBoeXBvdGhlc2lzOiB0d28tc2lkZWRcbiJ9 -->
+<pre><code>
+    Exact two-sample Kolmogorov-Smirnov test
+
+data:  x and y
+D = 0.17, p-value = 0.2811
+alternative hypothesis: two-sided</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Since our p-value(0.4287) is &gt; 0.05, we can’t reject <span class="math inline">\(H_0\)</span><br />
+Both samples <span class="math inline">\(\mathbf{x}\)</span> and <span class="math inline">\(\mathbf{y}\)</span> are generated using the exact
+same <span class="math inline">\(\Phi^{-1}\)</span> transformation
+applied to non-overlapping segments of the same underlying pseudo-random
+sequence <span class="math inline">\(\{a_k\}\)</span>. Therefore, they
+are drawn from the same underlying theoretical distribution (Standard
+Normal). The two-sample KS test correctly concludes that the small
+differences between the samples are likely due to sampling variability
+and not a fundamental difference in their underlying
+distributions.<br />
+## Task 4</p>
 <div id="problem-statement" class="section level3">
 <h3>Problem Statement</h3>
 <p>…</p>
@@ -1773,45 +2303,12 @@ Ostap - 4</p>
 <div id="solution" class="section level3">
 <h3>Solution</h3>
 <p>…</p>
-</div>
-</div>
-<div id="task-2" class="section level2">
-<h2>Task 2</h2>
-<div id="problem-statement-1" class="section level3">
-<h3>Problem Statement</h3>
-<p>…</p>
-</div>
-<div id="solution-1" class="section level3">
-<h3>Solution</h3>
-<p>…</p>
-</div>
-</div>
-<div id="task-3" class="section level2">
-<h2>Task 3</h2>
-<div id="problem-statement-2" class="section level3">
-<h3>Problem Statement</h3>
-<p>…</p>
-</div>
-<div id="solution-2" class="section level3">
-<h3>Solution</h3>
-<p>…</p>
-</div>
-</div>
-<div id="task-4" class="section level2">
-<h2>Task 4</h2>
-<div id="problem-statement-3" class="section level3">
-<h3>Problem Statement</h3>
-<p>…</p>
-</div>
-<div id="solution-3" class="section level3">
-<h3>Solution</h3>
-<p>…</p>
 <!-- rnb-text-end -->
 </div>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBMYWIgYXNzaWdubWVudCA0CgojIyBUZWFtCgoqVmxhZHlzbGF2IFZhc3lsY2hlbmtvLCBNYXggR29sb3ZpbiwgT3N0YXAgS29zdGl1ayoKCiMjIFdvcmsgZGlzdHJpYnV0aW9uCgpWbGFkIC0gMSwgMlwKTWF4IC0gM1wKT3N0YXAgLSA0CgojIyBUYXNrIDEKCiMjIyBQcm9ibGVtIFN0YXRlbWVudAoKLi4uCgojIyMgU29sdXRpb24KCi4uLgoKIyMgVGFzayAyCgojIyMgUHJvYmxlbSBTdGF0ZW1lbnQKCi4uLgoKIyMjIFNvbHV0aW9uCgouLi4KCiMjIFRhc2sgMwoKIyMjIFByb2JsZW0gU3RhdGVtZW50CgouLi4KCiMjIyBTb2x1dGlvbgoKLi4uCgojIyBUYXNrIDQKCiMjIyBQcm9ibGVtIFN0YXRlbWVudAoKLi4uCgojIyMgU29sdXRpb24KCi4uLgo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQojIExhYiBhc3NpZ25tZW50IDQNCg0KIyMgVGVhbQ0KDQoqVmxhZHlzbGF2IFZhc3lsY2hlbmtvLCBNYXggR29sb3ZpbiwgT3N0YXAgS29zdGl1ayoNCg0KIyMgV29yayBkaXN0cmlidXRpb24NCg0KVmxhZCAtIDEsIDJcDQpNYXggLSAzXA0KT3N0YXAgLSA0DQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFKQ0KYGBgDQoNCiMgUHJvYmxlbSAxDQoNCkluIHRoaXMgcHJvYmxlbSB3ZSBoYXZlIHR3byBpbmRlcGVuZGVudCBzYW1wbGVzICRYXzEsXGRvdHMsWF97MTAwfSQgYW5kDQokWV8xLFxkb3RzLFlfezUwfSQsIHdoaWNoIHdlIG1vZGVsIGFzIG9ic2VydmF0aW9ucyBmcm9tIG5vcm1hbA0KZGlzdHJpYnV0aW9ucyAkWF9pIFxzaW0gTihcbXVfMSwgMSkkIGFuZCAkWV9qIFxzaW0gTihcbXVfMiwgMSkkLg0KDQpXZSB0ZXN0IHRoZSBoeXBvdGhlc2VzDQokSF8wOiBcbXVfMSA9IFxtdV8yIFxxdWFkIFx0ZXh0e3ZzfSBccXVhZCBIXzE6IFxtdV8xIFxuZXEgXG11XzIkIHVuZGVyDQprbm93biB2YXJpYW5jZXMgJFxzaWdtYV8xXjIgPSBcc2lnbWFfMl4yID0gMSQuDQoNClRoZSBzZXF1ZW5jZSAkYV9rJCBpcyBkZWZpbmVkIGFzICQkDQphX2sgPSBceyBrIFxsbihrXjIgbiArIFxwaSkgXH0sIFxxdWFkIGsgXGdlIDEsDQokJCB3aGVyZSB0aGUgZnJhY3Rpb25hbCBwYXJ0IG9mIGEgbnVtYmVyICR4JCBpcyBkZWZpbmVkIGFzICQkDQpce3hcfSA9IHggLSBcbGZsb29yIHggXHJmbG9vciAuDQokJA0KDQpUaGUgZGF0YSBhcmUgdGhlbiBnZW5lcmF0ZWQgYXMgJCQNCnhfayA9IFxQaGleey0xfShhX2spLCBccXVhZCBrID0gMSxcZG90cywxMDAsDQokJCAkJA0KeV9sID0gXFBoaV57LTF9KGFfe2wrMTAwfSksIFxxdWFkIGwgPSAxLFxkb3RzLDUwLA0KJCQgd2hlcmUgJFxQaGleey0xfSQgaXMgdGhlIHF1YW50aWxlIGZ1bmN0aW9uIG9mIHRoZSBzdGFuZGFyZCBub3JtYWwNCmRpc3RyaWJ1dGlvbiAodGhlIGBxbm9ybWAgZnVuY3Rpb24gaW4gUikuDQoNClNpbmNlIHRoZSB2YXJpYW5jZXMgYXJlIGtub3duLCB0aGUgc3RhbmRhcmQgcHJvY2VkdXJlIGlzIHRoZSB0d28tc2FtcGxlDQpaLXRlc3QgZm9yIHRoZSBkaWZmZXJlbmNlIG9mIG1lYW5zLg0KDQpgYGB7cn0NCnRlYW1faWQgPC0gMTANCg0KYV9mdW4gPC0gZnVuY3Rpb24oaywgbikgew0KICB4IDwtIGsgKiBsb2coa14yICogbiArIHBpKQ0KICB4IC0gZmxvb3IoeCkNCn0NCg0Ka19tYXggIDwtIDE1MA0KYV9kYXRhIDwtIHNhcHBseSgxOmtfbWF4LCBhX2Z1biwgbiA9IHRlYW1faWQpDQoNCnJhbmdlKGFfZGF0YSkNCmBgYA0KDQpgYGB7cn0NCnggPC0gcW5vcm0oYV9kYXRhWzE6MTAwXSkNCg0KeSA8LSBxbm9ybShhX2RhdGFbMTAxOjE1MF0pDQoNCmxlbmd0aCh4KTsgbGVuZ3RoKHkpDQpgYGANCg0KV2UgZGVub3RlIHRoZSBzYW1wbGUgbWVhbnMgYXMgJCQNClxiYXIgWCA9IFxmcmFjezF9e25fMX1cc3VtX3tpPTF9XntuXzF9IFhfaSwNClxxcXVhZA0KXGJhciBZID0gXGZyYWN7MX17bl8yfVxzdW1fe2o9MX1ee25fMn0gWV9qLA0KJCQgd2hlcmUgJG5fMSA9IDEwMCQgYW5kICRuXzIgPSA1MCQuDQoNCkFjY29yZGluZyB0byB0aGUgcHJvYmxlbSBhc3N1bXB0aW9ucywgJCQNClhfaSBcc2ltIE4oXG11XzEsIDEpLCBccXF1YWQgWV9qIFxzaW0gTihcbXVfMiwgMSksDQokJCB0aGVyZWZvcmUgJCQNClxiYXIgWCBcc2ltIE5cIVxsZWZ0KFxtdV8xLFw7IFxmcmFjezF9e25fMX1ccmlnaHQpLCANClxxcXVhZA0KXGJhciBZIFxzaW0gTlwhXGxlZnQoXG11XzIsXDsgXGZyYWN7MX17bl8yfVxyaWdodCkuDQokJA0KDQpUaGVuIHRoZSBkaWZmZXJlbmNlIG9mIHRoZSBzYW1wbGUgbWVhbnMgaGFzIHRoZSBkaXN0cmlidXRpb24gJCQNClxiYXIgWCAtIFxiYXIgWSBcc2ltDQpOXCFcbGVmdChcbXVfMSAtIFxtdV8yLFw7IFxmcmFjezF9e25fMX0gKyBcZnJhY3sxfXtuXzJ9XHJpZ2h0KS4NCiQkDQoNClVuZGVyIHRoZSBudWxsIGh5cG90aGVzaXMgJEhfMDpcbXVfMSA9IFxtdV8yJCB3ZSBoYXZlICQkDQpcYmFyIFggLSBcYmFyIFkgXHNpbQ0KTlwhXGxlZnQoMCxcOyBcZnJhY3sxfXtuXzF9ICsgXGZyYWN7MX17bl8yfVxyaWdodCkuDQokJA0KDQpIZW5jZSwgdGhlIHRlc3Qgc3RhdGlzdGljICQkDQpaID0gXGZyYWN7XGJhciBYIC0gXGJhciBZfQ0KICAgICAgICAge1xzcXJ0e1xmcmFjezF9e25fMX0gKyBcZnJhY3sxfXtuXzJ9fX0NCiQkIGhhcyB0aGUgc3RhbmRhcmQgbm9ybWFsIGRpc3RyaWJ1dGlvbiAkTigwLDEpJCB3aGVuICRIXzAkIGlzIHRydWUuDQoNCmBgYHtyfQ0KbjEgPC0gbGVuZ3RoKHgpDQpuMiA8LSBsZW5ndGgoeSkNCg0KeF9iYXIgPC0gbWVhbih4KQ0KeV9iYXIgPC0gbWVhbih5KQ0KDQpuMTsgbjINCnhfYmFyOyB5X2Jhcg0KYGBgDQoNCmBgYHtyfQ0Kc2lnbWExX3NxIDwtIDENCnNpZ21hMl9zcSA8LSAxDQoNCnNlX2RpZmYgPC0gc3FydChzaWdtYTFfc3EgLyBuMSArIHNpZ21hMl9zcSAvIG4yKQ0KDQp6X29icyA8LSAoeF9iYXIgLSB5X2JhcikgLyBzZV9kaWZmDQp6X29icw0KYGBgDQoNCldlIHVzZSBhIHR3by1zaWRlZCB0ZXN0IGJlY2F1c2UgdGhlIGFsdGVybmF0aXZlIGh5cG90aGVzaXMgaXMNCiRIXzE6XG11XzEgXG5lcSBcbXVfMiQuDQoNClRoZSBzaWduaWZpY2FuY2UgbGV2ZWwgaXMgJFxhbHBoYSA9IDAuMDUkLg0KDQpGb3IgdGhlIHN0YW5kYXJkIG5vcm1hbCBkaXN0cmlidXRpb24gdGhlIGNyaXRpY2FsIHBvaW50cyBhcmUNCiR6X3sxLVxhbHBoYS8yfSA9IHpfezAuOTc1fSQuIFRoZSBjcml0aWNhbCByZWdpb24gaXMgJCQNClxtYXRocm17Q3J9ID0gXHsgeiA6IHx6fCA+IHpfezEtXGFscGhhLzJ9IFx9Lg0KJCQNCg0KYGBge3J9DQphbHBoYSAgPC0gMC4wNQ0Kel9jcml0IDwtIHFub3JtKDEgLSBhbHBoYS8yKQ0Kel9jcml0DQoNCmFicyh6X29icykgPiB6X2NyaXQNCmBgYA0KDQpJZiAkXGx2ZXJ0IFpfe1x0ZXh0e29ic319XHJ2ZXJ0ID4gel97MS1cYWxwaGEvMn0kLCB3ZSByZWplY3QgJEhfMCQuDQoNCkZvciB0aGUgdHdvLXNpZGVkIFotdGVzdCB0aGUgcC12YWx1ZSBpcyBjb21wdXRlZCBhcyAkJA0KcFx0ZXh0ey12YWx1ZX0NCj0gMlxiaWdsKDEgLSBcUGhpKFxsdmVydCBaX3tcdGV4dHtvYnN9fVxydmVydClcYmlnciksDQokJCB3aGVyZSAkXFBoaSQgaXMgdGhlIGN1bXVsYXRpdmUgZGlzdHJpYnV0aW9uIGZ1bmN0aW9uIG9mIHRoZSBzdGFuZGFyZA0Kbm9ybWFsIGRpc3RyaWJ1dGlvbi4NCg0KYGBge3J9DQpwX3ZhbHVlIDwtIDIgKiAoMSAtIHBub3JtKGFicyh6X29icykpKQ0KcF92YWx1ZQ0KYGBgDQoNCkludGVycHJldGF0aW9uOg0KDQotICAgSWYgJHBcdGV4dHstdmFsdWV9IDwgMC4wNSQsIHdlIHJlamVjdCAkSF8wJCBhdCB0aGUgc2lnbmlmaWNhbmNlDQogICAgbGV2ZWwgJFxhbHBoYSA9IDAuMDUkIGFuZCBjb25jbHVkZSB0aGF0ICRcbXVfMSQgYW5kICRcbXVfMiQgYXJlDQogICAgc3RhdGlzdGljYWxseSBkaWZmZXJlbnQuDQoNCi0gICBJZiAkcFx0ZXh0ey12YWx1ZX0gXGdlIDAuMDUkLCB3ZSBkbyBub3QgcmVqZWN0ICRIXzAkOiB0aGUgb2JzZXJ2ZWQNCiAgICBkYXRhIGRvIG5vdCBwcm92aWRlIHN1ZmZpY2llbnQgZXZpZGVuY2UgdG8gY2xhaW0gdGhhdCB0aGUgcG9wdWxhdGlvbg0KICAgIG1lYW5zIGFyZSBkaWZmZXJlbnQuDQoNCiMgUHJvYmxlbSAyDQoNCkluIHRoaXMgcGFydCB3ZSB0ZXN0IGh5cG90aGVzZXMgYWJvdXQgdGhlIHZhcmlhbmNlcyBvZiB0d28gbm9ybWFsDQpwb3B1bGF0aW9uczoNCg0KJCQNCkhfMDogXHNpZ21hXzFeMiA9IFxzaWdtYV8yXjIgDQpccXVhZCBcdGV4dHt2c30gXHF1YWQgDQpIXzE6IFxzaWdtYV8xXjIgPiBcc2lnbWFfMl4yLA0KJCQNCg0Kd2hlcmUgJFhfMSxcZG90cyxYX3tuXzF9JCBhbmQgJFlfMSxcZG90cyxZX3tuXzJ9JCBhcmUgdGhlIHNhbWUgc2FtcGxlcw0KYXMgaW4gUHJvYmxlbSAxLCB3aXRoICRuXzEgPSAxMDAkLCAkbl8yID0gNTAkLCBhbmQgdGhlIG1lYW5zICRcbXVfMSQsDQokXG11XzIkIGFyZSBhc3N1bWVkIHRvIGJlIHVua25vd24uDQoNCldlIGFzc3VtZSB0aGF0ICQkDQpYX2kgXHNpbSBOKFxtdV8xLCBcc2lnbWFfMV4yKSwgXHFxdWFkIFlfaiBcc2ltIE4oXG11XzIsIFxzaWdtYV8yXjIpLA0KJCQgYW5kIHRoYXQgdGhlIHNhbXBsZXMgYXJlIGluZGVwZW5kZW50LiBUaGUgc3RhbmRhcmQgdGVzdCBmb3IgY29tcGFyaW5nDQp0d28gdmFyaWFuY2VzIG9mIG5vcm1hbCBkaXN0cmlidXRpb25zIGlzIHRoZSAqKkYtdGVzdCoqLg0KDQpUaGUgc2FtcGxlIHZhcmlhbmNlcyBhcmUgZGVmaW5lZCBhcyAkJA0KU18xXjIgPSBcZnJhY3sxfXtuXzEtMX0gXHN1bV97aT0xfV57bl8xfSAoWF9pIC0gXGJhciBYKV4yLCBccXF1YWQNClNfMl4yID0gXGZyYWN7MX17bl8yLTF9IFxzdW1fe2o9MX1ee25fMn0gKFlfaiAtIFxiYXIgWSleMi4NCiQkDQoNCkZvciBub3JtYWwgZGF0YSB3ZSBrbm93IHRoYXQgJCQNClxmcmFjeyhuXzEtMSlTXzFeMn17XHNpZ21hXzFeMn0gXHNpbSBcY2hpXjJfe25fMS0xfSwNClxxcXVhZA0KXGZyYWN7KG5fMi0xKVNfMl4yfXtcc2lnbWFfMl4yfSBcc2ltIFxjaGleMl97bl8yLTF9LA0KJCQgYW5kIHRoZXNlIHR3byBjaGktc3F1YXJlZCB2YXJpYWJsZXMgYXJlIGluZGVwZW5kZW50Lg0KDQpVbmRlciB0aGUgbnVsbCBoeXBvdGhlc2lzICRIXzA6XHNpZ21hXzFeMiA9IFxzaWdtYV8yXjIkIHRoZSB0ZXN0DQpzdGF0aXN0aWMgJCQNCkYgPSBcZnJhY3tTXzFeMn17U18yXjJ9DQokJCBoYXMgdGhlIEYtZGlzdHJpYnV0aW9uIHdpdGggJChuXzEtMSwgbl8yLTEpJCBkZWdyZWVzIG9mIGZyZWVkb206ICQkDQpGIFxzaW0gRl97bl8xLTEsLG5fMi0xfS4NCiQkDQoNClNpbmNlIHRoZSBhbHRlcm5hdGl2ZSBoeXBvdGhlc2lzIGlzIG9uZS1zaWRlZA0KKCRcc2lnbWFfMV4yID4gXHNpZ21hXzJeMiQpLCB0aGUgY3JpdGljYWwgcmVnaW9uIGZvciBzaWduaWZpY2FuY2UgbGV2ZWwNCiRcYWxwaGEgPSAwLjA1JCBpcyAkJA0KXG1hdGhybXtDcn0gPSB7IGYgOiBmID4gRl97MS1cYWxwaGF9KG5fMS0xLCBuXzItMSkgfSwNCiQkIHdoZXJlICRGX3sxLVxhbHBoYX0obl8xLTEsIG5fMi0xKSQgaXMgdGhlICQoMS1cYWxwaGEpJC1xdWFudGlsZSBvZg0KdGhlICRGX3tuXzEtMSwsbl8yLTF9JCBkaXN0cmlidXRpb24uDQoNCmBgYHtyfQ0KczFfc3EgPC0gdmFyKHgpDQpzMl9zcSA8LSB2YXIoeSkNCg0KczFfc3ENCnMyX3NxDQoNCkZfb2JzIDwtIHMxX3NxIC8gczJfc3ENCkZfb2JzDQpgYGANCg0KYGBge3J9DQphbHBoYSA8LSAwLjA1DQoNCkZfY3JpdCA8LSBxZigxIC0gYWxwaGEsIGRmMSA9IG4xIC0gMSwgZGYyID0gbjIgLSAxKQ0KRl9jcml0DQoNCkZfb2JzID4gRl9jcml0DQpgYGANCg0KSWYgJEZfb2JzIFw+IEZfY3JpdCQsIHdlIHJlamVjdCAkSF8wJCBhdCB0aGUgc2lnbmlmaWNhbmNlIGxldmVsDQokXGFscGhhID0gMC4wNSQuIE90aGVyd2lzZSwgd2UgZG8gbm90IHJlamVjdCAkSF8wJC4NCg0KRm9yIHRoZSBvbmUtc2lkZWQgdGVzdCAkSF8xOlxzaWdtYV8xXjIgPiBcc2lnbWFfMl4yJCB0aGUgcC12YWx1ZSBpcyAkJA0KcFx0ZXh0ey12YWx1ZX0NCj0gUFxiaWdsKEZfe25fMS0xLCxuXzItMX0gXGdlIEZfe1x0ZXh0e29ic319XGJpZ3IpDQo9IDEgLSBGX0YoRl97XHRleHR7b2JzfX0pLA0KJCQgd2hlcmUgJEZfRiQgaXMgdGhlIGN1bXVsYXRpdmUgZGlzdHJpYnV0aW9uIGZ1bmN0aW9uIG9mIHRoZQ0KRi1kaXN0cmlidXRpb24uDQoNCmBgYHtyfQ0KcF92YWx1ZV9GIDwtIDEgLSBwZihGX29icywgZGYxID0gbjEgLSAxLCBkZjIgPSBuMiAtIDEpDQpwX3ZhbHVlX0YNCmBgYA0KDQpJbnRlcnByZXRhdGlvbjoNCg0K4oCiIElmICRwXHRleHR7LXZhbHVlfSA8IDAuMDUkLCB3ZSByZWplY3QgJEhfMCQgYXQgdGhlIHNpZ25pZmljYW5jZSBsZXZlbA0KJFxhbHBoYSA9IDAuMDUkIGFuZCBjb25jbHVkZSB0aGF0IHRoZSB2YXJpYW5jZSBvZiB0aGUgZmlyc3QgcG9wdWxhdGlvbg0KaXMgc2lnbmlmaWNhbnRseSBsYXJnZXIgdGhhbiB0aGUgdmFyaWFuY2Ugb2YgdGhlIHNlY29uZCBwb3B1bGF0aW9uLg0KDQrigKIgSWYgJHBcdGV4dHstdmFsdWV9IFxnZSAwLjA1JCwgd2UgZG8gbm90IHJlamVjdCAkSF8wJC4gSW4gdGhpcyBjYXNlLA0KdGhlIG9ic2VydmVkIGRhdGEgZG8gbm90IHByb3ZpZGUgc3VmZmljaWVudCBldmlkZW5jZSB0byBjbGFpbSB0aGF0DQokXHNpZ21hXzFeMiA+IFxzaWdtYV8yXjIkLg0KDQojIyBUYXNrIDMNClRoZSBwcm9ibGVtIGFza3MgdG8gY2hlY2sgZGlzdHJpYnV0aW9uIHByb3BlcnRpZXMgb2YgdGhlIGdlbmVyYXRlZCBzYW1wbGVzIHVzaW5nIHRoZSBLb2xtb2dvcm924oCTU21pcm5vdiAoS1MpIHRlc3QuXA0KDQpUaGUgS29sbW9nb3JvduKAk1NtaXJub3YgdGVzdCBpcyBhIG5vbi1wYXJhbWV0cmljIHRlc3QgdXNlZCB0byBkZXRlcm1pbmUgaWYgYSBzYW1wbGUgY29tZXMgZnJvbSBhIHNwZWNpZmljIGRpc3RyaWJ1dGlvbiAob25lLXNhbXBsZSBLUyB0ZXN0KSBvciBpZiB0d28gc2FtcGxlcyBjb21lIGZyb20gdGhlIHNhbWUgZGlzdHJpYnV0aW9uICh0d28tc2FtcGxlIEtTIHRlc3QpLlwNClRoZSB0ZXN0IGlzIGJhc2VkIG9uIHRoZSBFbXBpcmljYWwgQ3VtdWxhdGl2ZSBEaXN0cmlidXRpb24gRnVuY3Rpb24uXA0KT25lLVNhbXBsZTogVGhlIEtTIHRlc3Qgc3RhdGlzdGljLCAkRCQsIG1lYXN1cmVzIHRoZSBtYXhpbXVtIGFic29sdXRlIGRpZmZlcmVuY2UgYmV0d2VlbiB0aGUgRUNERiBvZiB0aGUgc2FtcGxlLCAkRl9uKHQpJCwgYW5kIHRoZSBoeXBvdGhlc2l6ZWQgdGhlb3JldGljYWwgQ3VtdWxhdGl2ZSBEaXN0cmlidXRpb24gRnVuY3Rpb24gKENERiksICRGKHQpJC4kJEQgPSBcc3VwX3QgfEZfbih0KSAtIEYodCl8JCRcDQpUd28tU2FtcGxlOiBUaGUgS1MgdGVzdCBzdGF0aXN0aWMsICREJCwgbWVhc3VyZXMgdGhlIG1heGltdW0gYWJzb2x1dGUgZGlmZmVyZW5jZSBiZXR3ZWVuIHRoZSBFQ0RGcyBvZiB0aGUgdHdvIHNhbXBsZXMsICRGX3tuXzF9KHQpJCBhbmQgJEZfe25fMn0odCkkLiQkRCA9IFxzdXBfdCB8Rl97bl8xfSh0KSAtIEZfe25fMn0odCl8JCRcDQpBIGxhcmdlIHZhbHVlIG9mICREJCBzdWdnZXN0cyBhIHBvb3IgZml0IG9yIGRpZmZlcmVudCB1bmRlcmx5aW5nIGRpc3RyaWJ1dGlvbnMuIFRoZSB0ZXN0IHJlamVjdHMgdGhlIG51bGwgaHlwb3RoZXNpcyAoJEhfMCQpIGlmIHRoZSAkRCQgc3RhdGlzdGljIGV4Y2VlZHMgYSBjcml0aWNhbCB2YWx1ZSAkQyQgKGJhc2VkIG9uIHRoZSBzYW1wbGUgc2l6ZShzKSBhbmQgc2lnbmlmaWNhbmNlIGxldmVsICRcYWxwaGEkKSwgb3IsIGVxdWl2YWxlbnRseSwgaWYgdGhlICRwJC12YWx1ZSBpcyBsZXNzIHRoYW4gJFxhbHBoYSQuXA0KVGhlIGZ1bmN0aW9uICRhX2sgPSBce2sgXGxuIChrXnsybn0gKyBccGkpXH0kIGdlbmVyYXRlcyBhIHNlcXVlbmNlIGluICQoMCwgMSkkIHRoYXQgYXBwcm94aW1hdGVzIGEgdW5pZm9ybSAkVSgwLCAxKSQgZGlzdHJpYnV0aW9uLiBBcHBseWluZyAkXFBoaV57LTF9JCAodGhlIHFub3JtIGZ1bmN0aW9uKSB0cmFuc2Zvcm1zIHRoaXMgdW5pZm9ybSBzZXF1ZW5jZSBpbnRvIGEgc2VxdWVuY2UgdGhhdCBhcHByb3hpbWF0ZXMgYSBzdGFuZGFyZCBub3JtYWwgJE4oMCwgMSkkIGRpc3RyaWJ1dGlvbi5cDQoNCkZvciBhIHNpZ25pZmljYW5jZSBsZXZlbCAkXGFscGhhPTAuMDUkLCB0aGUgcmVqZWN0aW9uIHJ1bGUgaXM6JCRcdGV4dHtSZWplY3QgfSBIXzAgXHRleHR7IGlmIH0gRCA+IEMsIFxxdWFkIFx0ZXh0e29yLCBlcXVpdmFsZW50bHksIGlmIH0gcFx0ZXh0ey12YWx1ZX0gPCAwLjA1JCRXaGVyZSAkRCQgaXMgdGhlIEtTIHRlc3Qgc3RhdGlzdGljICh0aGUgbWF4aW11bSBhYnNvbHV0ZSBkaWZmZXJlbmNlIGJldHdlZW4gdGhlIEVDREZzKSBhbmQgJEMkIGlzIHRoZSBjcml0aWNhbCB2YWx1ZSBmb3IgdGhlIHNwZWNpZmllZCAkXGFscGhhJC5cDQpgYGB7cn0NCm4gPC0gMTANCnNldC5zZWVkKG4pDQprX3ZhbHVlcyA8LSAxOjE1MA0KDQphX2tfZnVsbCA8LSAoa192YWx1ZXMgKiBsb2coa192YWx1ZXNeKDIqbikgKyBwaSkpICUlIDENCg0KYV94IDwtIGFfa19mdWxsWzE6MTAwXQ0KYV95IDwtIGFfa19mdWxsWzEwMToxNTBdDQoNCnggPC0gcW5vcm0oYV94KQ0KeSA8LSBxbm9ybShhX3kpDQpgYGANCg0KYSlcDQpUYXNrOiBDaGVjayBpZiAkXHt4X2tcfV97az0xfV57MTAwfSQgYXJlIG5vcm1hbGx5IGRpc3RyaWJ1dGVkICh3aXRoIHBhcmFtZXRlcnMgY2FsY3VsYXRlZCBmcm9tIHRoZSBzYW1wbGUpLlwNCkkgdXNlZCBLb2xtb2dvcm924oCTU21pcm5vdiB0ZXN0IHRvIGNvbXBhcmUgYW4gZW1waXJpY2FsIGRpc3RyaWJ1dGlvbiBmdW5jdGlvbiAoRURGKSBhZ2FpbnN0IGEgc3BlY2lmaWVkIHRoZW9yZXRpY2FsIGRpc3RyaWJ1dGlvbiBmdW5jdGlvbiAoQ0RGKS5cDQpIeXBvdGhlc2VzXA0KJEhfMCQ6ICRce3hfa1x9JCBmb2xsb3dzIGEgTm9ybWFsIGRpc3RyaWJ1dGlvbiAkTihcbXUsIFxzaWdtYV4yKSQgd2hlcmUgJFxtdSQgYW5kICRcc2lnbWEkIGFyZSB0aGUgc2FtcGxlIG1lYW4gYW5kIHN0YW5kYXJkIGRldmlhdGlvbi5cDQokSF8xJDogJFx7eF9rXH0kIGRvZXMgbm90IGZvbGxvdyB0aGlzIE5vcm1hbCBkaXN0cmlidXRpb24uXA0KDQpgYGB7cn0NCnNhbXBsZV9tZWFuX3ggPC0gbWVhbih4KQ0Kc2FtcGxlX3NkX3ggPC0gc2QoeCkNCmNhdCgiU2FtcGxlIE1lYW4gb2YgeDoiLCBzYW1wbGVfbWVhbl94LCAiXG4iKQ0KY2F0KCJTYW1wbGUgU0Qgb2YgeDoiLCBzYW1wbGVfc2RfeCwgIlxuIikNCmBgYA0KDQpgYGB7cn0NCmtzX3Rlc3RfYSA8LSBrcy50ZXN0KHgsICJwbm9ybSIsIG1lYW4gPSBzYW1wbGVfbWVhbl94LCBzZCA9IHNhbXBsZV9zZF94KQ0KcHJpbnQoa3NfdGVzdF9hKQ0KYGBgDQpTaW5jZSBvdXIgcC12YWx1ZSgwLjg0MDIpIGlzID4gMC4wNSwgd2UgY2FuJ3QgcmVqZWN0ICRIXzAkXA0KVGhlIGdlbmVyYXRlZCAkeF9rJCB2YWx1ZXMgYXJlIGRlcml2ZWQgZGlyZWN0bHkgZnJvbSB0aGUgc3RhbmRhcmQgbm9ybWFsIENERiBpbnZlcnNlICgkXFBoaV57LTF9JCkgYXBwbGllZCB0byBhICRVKDAsIDEpJCBzZXF1ZW5jZS4gVGh1cywgdGhlIGRhdGEgaXMgYnkgY29uc3RydWN0aW9uIGFuIGV4Y2VsbGVudCBhcHByb3hpbWF0aW9uIG9mIGEgc3RhbmRhcmQgbm9ybWFsIGRpc3RyaWJ1dGlvbi4gVGhlIGhpZ2ggJHAkLXZhbHVlIGNvbmZpcm1zIHRoYXQgdGhlIG9ic2VydmVkIGRldmlhdGlvbnMgZnJvbSB0aGUgbm9ybWFsIENERiBhcmUgd2VsbCB3aXRoaW4gdGhlIHJhbmdlIGV4cGVjdGVkIGJ5IGNoYW5jZSBpZiAkSF8wJCB3ZXJlIHRydWUuXA0KDQpiKQ0KVGFzazogQ2hlY2sgaWYgJFx7fHhfa3xcfV97az0xfV57MTAwfSQgYXJlIGV4cG9uZW50aWFsbHkgZGlzdHJpYnV0ZWQgd2l0aCAkXGxhbWJkYSA9IDEkLlwNCkkgdXNlZCBLb2xtb2dvcm924oCTU21pcm5vdiB0ZXN0IHRvIGNvbXBhcmUgdGhlIEVERiBvZiB0aGUgc2FtcGxlICRcbWF0aGJme3x4fH0kIGFnYWluc3QgdGhlIGZpeGVkIHRoZW9yZXRpY2FsICRcdGV4dHtFeHB9KFxsYW1iZGE9MSkkIENERi5cDQokSF8wJDogJFx7fHhfa3xcfSQgZm9sbG93cyBhbiAkXHRleHR7RXhwfShcbGFtYmRhPTEpJCBkaXN0cmlidXRpb24gKG1lYW4gJD0gMSQpLlwNCiRIXzEkOiAkXHt8eF9rfFx9JCBkb2VzIG5vdCBmb2xsb3cgdGhpcyBFeHBvbmVudGlhbCBkaXN0cmlidXRpb24uXA0KDQpgYGB7cn0NCmFic194IDwtIGFicyh4KQ0Kc2FtcGxlX21lYW5fYWJzX3ggPC0gbWVhbihhYnNfeCkNCmNhdCgiU2FtcGxlIE1lYW4gb2YgfHh8OiIsIHNhbXBsZV9tZWFuX2Fic194LCAiXG4iKQ0KYGBgDQoNCmBgYHtyfQ0Ka3NfdGVzdF9iIDwtIGtzLnRlc3QoYWJzX3gsICJwZXhwIiwgcmF0ZSA9IDEpDQpwcmludChrc190ZXN0X2IpDQpgYGANClNpbmNlIG91ciBwLXZhbHVlKDAuMDk4ODYpIGlzID4gMC4wNSwgd2UgY2FuJ3QgcmVqZWN0ICRIXzAkXA0KVGhlIHNhbXBsZSAkXG1hdGhiZnt8eHx9JCBjb21lcyBmcm9tIHRoZSBhYnNvbHV0ZSB2YWx1ZXMgb2YgYSBzdGFuZGFyZCBub3JtYWwgZGlzdHJpYnV0aW9uLiBXZSBjb25jbHVkZSB0aGVyZSBpcyBpbnN1ZmZpY2llbnQgZXZpZGVuY2UgYXQgdGhlICRcYWxwaGE9MC4wNSQgbGV2ZWwgdG8gc2F5IHRoZSBkYXRhIGlzIG5vdCBFeHBvbmVudGlhbCB3aXRoICRcbGFtYmRhPTEkLlwNCg0KYykNClRhc2s6IENoZWNrIGlmICRce3hfa1x9X3trPTF9XnsxMDB9JCBhbmQgJFx7eV9sXH1fe2w9MX1eezUwfSQgaGF2ZSB0aGUgc2FtZSBkaXN0cmlidXRpb25zLlwNCkkgdXNlZCBLb2xtb2dvcm924oCTU21pcm5vdiB0ZXN0IHRvIGNvbXBhcmUgdGhlIEVERnMgb2YgdHdvIGluZGVwZW5kZW50IHNhbXBsZXMgKCRcbWF0aGJme3h9JCBhbmQgJFxtYXRoYmZ7eX0kKSB0byBkZXRlcm1pbmUgaWYgdGhleSBvcmlnaW5hdGUgZnJvbSB0aGUgc2FtZSB1bmRlcmx5aW5nIGNvbnRpbnVvdXMgZGlzdHJpYnV0aW9uLlwNCiRIXzAkOiAkXHt4X2tcfSQgYW5kICRce3lfbFx9JCBhcmUgZHJhd24gZnJvbSB0aGUgc2FtZSBjb250aW51b3VzIGRpc3RyaWJ1dGlvbi5cDQokSF8xJDogJFx7eF9rXH0kIGFuZCAkXHt5X2xcfSQgYXJlIGRyYXduIGZyb20gZGlmZmVyZW50IGNvbnRpbnVvdXMgZGlzdHJpYnV0aW9ucy5cDQoNCmBgYHtyfQ0Kc2FtcGxlX21lYW5feSA8LSBtZWFuKHkpDQpzYW1wbGVfc2RfeSA8LSBzZCh5KQ0KY2F0KCJTYW1wbGUgTWVhbiBvZiB4OiIsIHNhbXBsZV9tZWFuX3gsICJcbiIpDQpjYXQoIlNhbXBsZSBNZWFuIG9mIHk6Iiwgc2FtcGxlX21lYW5feSwgIlxuIikNCmNhdCgiU2FtcGxlIFNEIG9mIHg6Iiwgc2FtcGxlX3NkX3gsICJcbiIpDQpjYXQoIlNhbXBsZSBTRCBvZiB5OiIsIHNhbXBsZV9zZF95LCAiXG4iKQ0KYGBgDQoNCmBgYHtyfQ0Ka3NfdGVzdF9jIDwtIGtzLnRlc3QoeCwgeSkNCnByaW50KGtzX3Rlc3RfYykNCmBgYA0KU2luY2Ugb3VyIHAtdmFsdWUoMC40Mjg3KSBpcyA+IDAuMDUsIHdlIGNhbid0IHJlamVjdCAkSF8wJFwNCkJvdGggc2FtcGxlcyAkXG1hdGhiZnt4fSQgYW5kICRcbWF0aGJme3l9JCBhcmUgZ2VuZXJhdGVkIHVzaW5nIHRoZSBleGFjdCBzYW1lICRcUGhpXnstMX0kIHRyYW5zZm9ybWF0aW9uIGFwcGxpZWQgdG8gbm9uLW92ZXJsYXBwaW5nIHNlZ21lbnRzIG9mIHRoZSBzYW1lIHVuZGVybHlpbmcgcHNldWRvLXJhbmRvbSBzZXF1ZW5jZSAkXHthX2tcfSQuIFRoZXJlZm9yZSwgdGhleSBhcmUgZHJhd24gZnJvbSB0aGUgc2FtZSB1bmRlcmx5aW5nIHRoZW9yZXRpY2FsIGRpc3RyaWJ1dGlvbiAoU3RhbmRhcmQgTm9ybWFsKS4gVGhlIHR3by1zYW1wbGUgS1MgdGVzdCBjb3JyZWN0bHkgY29uY2x1ZGVzIHRoYXQgdGhlIHNtYWxsIGRpZmZlcmVuY2VzIGJldHdlZW4gdGhlIHNhbXBsZXMgYXJlIGxpa2VseSBkdWUgdG8gc2FtcGxpbmcgdmFyaWFiaWxpdHkgYW5kIG5vdCBhIGZ1bmRhbWVudGFsIGRpZmZlcmVuY2UgaW4gdGhlaXIgdW5kZXJseWluZyBkaXN0cmlidXRpb25zLlwNCiMjIFRhc2sgNA0KDQojIyMgUHJvYmxlbSBTdGF0ZW1lbnQNCg0KLi4uDQoNCiMjIyBTb2x1dGlvbg0KDQouLi4NCg==</div>
 
 
 
