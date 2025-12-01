@@ -21,13 +21,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Problem 1
 
-In this problem we have two independent samples $X_1,\dots,X_{100}$ and
-$Y_1,\dots,Y_{50}$, which we model as observations from normal
-distributions $X_i \sim N(\mu_1, 1)$ and $Y_j \sim N(\mu_2, 1)$.
+In this problem we have two independent samples $X_1,\dots,X_{100}$ and $Y_1,\dots,Y_{50}$, which we model as observations from normal distributions $X_i \sim N(\mu_1, 1)$ and $Y_j \sim N(\mu_2, 1)$.
 
-We test the hypotheses
-$H_0: \mu_1 = \mu_2 \quad \text{vs} \quad H_1: \mu_1 \neq \mu_2$ under
-known variances $\sigma_1^2 = \sigma_2^2 = 1$.
+We test the hypotheses $H_0: \mu_1 = \mu_2 \quad \text{vs} \quad H_1: \mu_1 \neq \mu_2$ under known variances $\sigma_1^2 = \sigma_2^2 = 1$.
 
 The sequence $a_k$ is defined as $$
 a_k = \{ k \ln(k^2 n + \pi) \}, \quad k \ge 1,
@@ -39,11 +35,9 @@ The data are then generated as $$
 x_k = \Phi^{-1}(a_k), \quad k = 1,\dots,100,
 $$ $$
 y_l = \Phi^{-1}(a_{l+100}), \quad l = 1,\dots,50,
-$$ where $\Phi^{-1}$ is the quantile function of the standard normal
-distribution (the `qnorm` function in R).
+$$ where $\Phi^{-1}$ is the quantile function of the standard normal distribution (the `qnorm` function in R).
 
-Since the variances are known, the standard procedure is the two-sample
-Z-test for the difference of means.
+Since the variances are known, the standard procedure is the two-sample Z-test for the difference of means.
 
 ```{r}
 team_id <- 10
@@ -117,13 +111,11 @@ z_obs <- (x_bar - y_bar) / se_diff
 z_obs
 ```
 
-We use a two-sided test because the alternative hypothesis is
-$H_1:\mu_1 \neq \mu_2$.
+We use a two-sided test because the alternative hypothesis is $H_1:\mu_1 \neq \mu_2$.
 
 The significance level is $\alpha = 0.05$.
 
-For the standard normal distribution the critical points are
-$z_{1-\alpha/2} = z_{0.975}$. The critical region is $$
+For the standard normal distribution the critical points are $z_{1-\alpha/2} = z_{0.975}$. The critical region is $$
 \mathrm{Cr} = \{ z : |z| > z_{1-\alpha/2} \}.
 $$
 
@@ -140,8 +132,7 @@ If $\lvert Z_{\text{obs}}\rvert > z_{1-\alpha/2}$, we reject $H_0$.
 For the two-sided Z-test the p-value is computed as $$
 p\text{-value}
 = 2\bigl(1 - \Phi(\lvert Z_{\text{obs}}\rvert)\bigr),
-$$ where $\Phi$ is the cumulative distribution function of the standard
-normal distribution.
+$$ where $\Phi$ is the cumulative distribution function of the standard normal distribution.
 
 ```{r}
 p_value <- 2 * (1 - pnorm(abs(z_obs)))
@@ -150,18 +141,13 @@ p_value
 
 Interpretation:
 
--   If $p\text{-value} < 0.05$, we reject $H_0$ at the significance
-    level $\alpha = 0.05$ and conclude that $\mu_1$ and $\mu_2$ are
-    statistically different.
+-   If $p\text{-value} < 0.05$, we reject $H_0$ at the significance level $\alpha = 0.05$ and conclude that $\mu_1$ and $\mu_2$ are statistically different.
 
--   If $p\text{-value} \ge 0.05$, we do not reject $H_0$: the observed
-    data do not provide sufficient evidence to claim that the population
-    means are different.
+-   If $p\text{-value} \ge 0.05$, we do not reject $H_0$: the observed data do not provide sufficient evidence to claim that the population means are different.
 
 # Problem 2
 
-In this part we test hypotheses about the variances of two normal
-populations:
+In this part we test hypotheses about the variances of two normal populations:
 
 $$
 H_0: \sigma_1^2 = \sigma_2^2 
@@ -169,14 +155,11 @@ H_0: \sigma_1^2 = \sigma_2^2
 H_1: \sigma_1^2 > \sigma_2^2,
 $$
 
-where $X_1,\dots,X_{n_1}$ and $Y_1,\dots,Y_{n_2}$ are the same samples
-as in Problem 1, with $n_1 = 100$, $n_2 = 50$, and the means $\mu_1$,
-$\mu_2$ are assumed to be unknown.
+where $X_1,\dots,X_{n_1}$ and $Y_1,\dots,Y_{n_2}$ are the same samples as in Problem 1, with $n_1 = 100$, $n_2 = 50$, and the means $\mu_1$, $\mu_2$ are assumed to be unknown.
 
 We assume that $$
 X_i \sim N(\mu_1, \sigma_1^2), \qquad Y_j \sim N(\mu_2, \sigma_2^2),
-$$ and that the samples are independent. The standard test for comparing
-two variances of normal distributions is the **F-test**.
+$$ and that the samples are independent. The standard test for comparing two variances of normal distributions is the **F-test**.
 
 The sample variances are defined as $$
 S_1^2 = \frac{1}{n_1-1} \sum_{i=1}^{n_1} (X_i - \bar X)^2, \qquad
@@ -189,19 +172,15 @@ For normal data we know that $$
 \frac{(n_2-1)S_2^2}{\sigma_2^2} \sim \chi^2_{n_2-1},
 $$ and these two chi-squared variables are independent.
 
-Under the null hypothesis $H_0:\sigma_1^2 = \sigma_2^2$ the test
-statistic $$
+Under the null hypothesis $H_0:\sigma_1^2 = \sigma_2^2$ the test statistic $$
 F = \frac{S_1^2}{S_2^2}
 $$ has the F-distribution with $(n_1-1, n_2-1)$ degrees of freedom: $$
 F \sim F_{n_1-1,,n_2-1}.
 $$
 
-Since the alternative hypothesis is one-sided
-($\sigma_1^2 > \sigma_2^2$), the critical region for significance level
-$\alpha = 0.05$ is $$
+Since the alternative hypothesis is one-sided ($\sigma_1^2 > \sigma_2^2$), the critical region for significance level $\alpha = 0.05$ is $$
 \mathrm{Cr} = { f : f > F_{1-\alpha}(n_1-1, n_2-1) },
-$$ where $F_{1-\alpha}(n_1-1, n_2-1)$ is the $(1-\alpha)$-quantile of
-the $F_{n_1-1,,n_2-1}$ distribution.
+$$ where $F_{1-\alpha}(n_1-1, n_2-1)$ is the $(1-\alpha)$-quantile of the $F_{n_1-1,,n_2-1}$ distribution.
 
 ```{r}
 s1_sq <- var(x)
@@ -223,15 +202,13 @@ F_crit
 F_obs > F_crit
 ```
 
-If $F_obs \> F_crit$, we reject $H_0$ at the significance level
-$\alpha = 0.05$. Otherwise, we do not reject $H_0$.
+If $F_obs \> F_crit$, we reject $H_0$ at the significance level $\alpha = 0.05$. Otherwise, we do not reject $H_0$.
 
 For the one-sided test $H_1:\sigma_1^2 > \sigma_2^2$ the p-value is $$
 p\text{-value}
 = P\bigl(F_{n_1-1,,n_2-1} \ge F_{\text{obs}}\bigr)
 = 1 - F_F(F_{\text{obs}}),
-$$ where $F_F$ is the cumulative distribution function of the
-F-distribution.
+$$ where $F_F$ is the cumulative distribution function of the F-distribution.
 
 ```{r}
 p_value_F <- 1 - pf(F_obs, df1 = n1 - 1, df2 = n2 - 1)
@@ -240,15 +217,12 @@ p_value_F
 
 Interpretation:
 
-• If $p\text{-value} < 0.05$, we reject $H_0$ at the significance level
-$\alpha = 0.05$ and conclude that the variance of the first population
-is significantly larger than the variance of the second population.
+• If $p\text{-value} < 0.05$, we reject $H_0$ at the significance level $\alpha = 0.05$ and conclude that the variance of the first population is significantly larger than the variance of the second population.
 
-• If $p\text{-value} \ge 0.05$, we do not reject $H_0$. In this case,
-the observed data do not provide sufficient evidence to claim that
-$\sigma_1^2 > \sigma_2^2$.
+• If $p\text{-value} \ge 0.05$, we do not reject $H_0$. In this case, the observed data do not provide sufficient evidence to claim that $\sigma_1^2 > \sigma_2^2$.
 
 ## Task 3
+
 The problem asks to check distribution properties of the generated samples using the Kolmogorov–Smirnov (KS) test.\
 
 The Kolmogorov–Smirnov test is a non-parametric test used to determine if a sample comes from a specific distribution (one-sample KS test) or if two samples come from the same distribution (two-sample KS test).\
@@ -259,6 +233,7 @@ A large value of $D$ suggests a poor fit or different underlying distributions. 
 The function $a_k = \{k \ln (k^{2n} + \pi)\}$ generates a sequence in $(0, 1)$ that approximates a uniform $U(0, 1)$ distribution. Applying $\Phi^{-1}$ (the qnorm function) transforms this uniform sequence into a sequence that approximates a standard normal $N(0, 1)$ distribution.\
 
 For a significance level $\alpha=0.05$, the rejection rule is:$$\text{Reject } H_0 \text{ if } D > C, \quad \text{or, equivalently, if } p\text{-value} < 0.05$$Where $D$ is the KS test statistic (the maximum absolute difference between the ECDFs) and $C$ is the critical value for the specified $\alpha$.\
+
 ```{r}
 n <- 10
 set.seed(n)
@@ -291,14 +266,14 @@ cat("Sample SD of x:", sample_sd_x, "\n")
 ks_test_a <- ks.test(x, "pnorm", mean = sample_mean_x, sd = sample_sd_x)
 print(ks_test_a)
 ```
-Since our p-value(0.8402) is > 0.05, we can't reject $H_0$\
+
+Since our p-value(0.8402) is \> 0.05, we can't reject $H_0$\
 The generated $x_k$ values are derived directly from the standard normal CDF inverse ($\Phi^{-1}$) applied to a $U(0, 1)$ sequence. Thus, the data is by construction an excellent approximation of a standard normal distribution. The high $p$-value confirms that the observed deviations from the normal CDF are well within the range expected by chance if $H_0$ were true.\
 
-b)
-Task: Check if $\{|x_k|\}_{k=1}^{100}$ are exponentially distributed with $\lambda = 1$.\
-I used Kolmogorov–Smirnov test to compare the EDF of the sample $\mathbf{|x|}$ against the fixed theoretical $\text{Exp}(\lambda=1)$ CDF.\
-$H_0$: $\{|x_k|\}$ follows an $\text{Exp}(\lambda=1)$ distribution (mean $= 1$).\
-$H_1$: $\{|x_k|\}$ does not follow this Exponential distribution.\
+b)  Task: Check if $\{|x_k|\}_{k=1}^{100}$ are exponentially distributed with $\lambda = 1$.\
+    I used Kolmogorov–Smirnov test to compare the EDF of the sample $\mathbf{|x|}$ against the fixed theoretical $\text{Exp}(\lambda=1)$ CDF.\
+    $H_0$: $\{|x_k|\}$ follows an $\text{Exp}(\lambda=1)$ distribution (mean $= 1$).\
+    $H_1$: $\{|x_k|\}$ does not follow this Exponential distribution.\
 
 ```{r}
 abs_x <- abs(x)
@@ -310,14 +285,14 @@ cat("Sample Mean of |x|:", sample_mean_abs_x, "\n")
 ks_test_b <- ks.test(abs_x, "pexp", rate = 1)
 print(ks_test_b)
 ```
-Since our p-value(0.09886) is > 0.05, we can't reject $H_0$\
+
+Since our p-value(0.09886) is \> 0.05, we can't reject $H_0$\
 The sample $\mathbf{|x|}$ comes from the absolute values of a standard normal distribution. We conclude there is insufficient evidence at the $\alpha=0.05$ level to say the data is not Exponential with $\lambda=1$.\
 
-c)
-Task: Check if $\{x_k\}_{k=1}^{100}$ and $\{y_l\}_{l=1}^{50}$ have the same distributions.\
-I used Kolmogorov–Smirnov test to compare the EDFs of two independent samples ($\mathbf{x}$ and $\mathbf{y}$) to determine if they originate from the same underlying continuous distribution.\
-$H_0$: $\{x_k\}$ and $\{y_l\}$ are drawn from the same continuous distribution.\
-$H_1$: $\{x_k\}$ and $\{y_l\}$ are drawn from different continuous distributions.\
+c)  Task: Check if $\{x_k\}_{k=1}^{100}$ and $\{y_l\}_{l=1}^{50}$ have the same distributions.\
+    I used Kolmogorov–Smirnov test to compare the EDFs of two independent samples ($\mathbf{x}$ and $\mathbf{y}$) to determine if they originate from the same underlying continuous distribution.\
+    $H_0$: $\{x_k\}$ and $\{y_l\}$ are drawn from the same continuous distribution.\
+    $H_1$: $\{x_k\}$ and $\{y_l\}$ are drawn from different continuous distributions.\
 
 ```{r}
 sample_mean_y <- mean(y)
@@ -332,14 +307,113 @@ cat("Sample SD of y:", sample_sd_y, "\n")
 ks_test_c <- ks.test(x, y)
 print(ks_test_c)
 ```
-Since our p-value(0.4287) is > 0.05, we can't reject $H_0$\
+
+Since our p-value(0.4287) is \> 0.05, we can't reject $H_0$\
 Both samples $\mathbf{x}$ and $\mathbf{y}$ are generated using the exact same $\Phi^{-1}$ transformation applied to non-overlapping segments of the same underlying pseudo-random sequence $\{a_k\}$. Therefore, they are drawn from the same underlying theoretical distribution (Standard Normal). The two-sample KS test correctly concludes that the small differences between the samples are likely due to sampling variability and not a fundamental difference in their underlying distributions.\
-## Task 4
 
-### Problem Statement
+# Task 4
 
-...
+## Problem statement
 
-### Solution
+In this task you’ll practice fitting the regression line to some real-life features and analyzing the results. The file data.csv contains data on students, specifically their study time and corresponding marks. Your tasks are as follows: (a) Create a scatter plot of Marks vs. Study Time and provide brief comments;\
+(b) Fit a linear regression model using marks as the dependent variable and study time as the independent variable. Explain shortly the process of deriving the regression equation;\
+(c) Evaluate the goodness-of-fit for the fitted line;\
+(d) Suggest a way to test whether the study time is significant in predicting marks. Find the corresponding test statistics, specify its distribution. Find the p-value of the test and make a conclusion;\
+(e) If Alice studies for approximately 8 hours, what grade can we predict for her?\
+(f) Suggest up to three ideas to potentially improve prediction accuracy;\
 
-...
+## Solution
+
+**Importing data**
+
+```{r}
+data <- read.csv("data.csv")
+head(data)
+str(data)
+summary(data)
+```
+
+**(a)**
+
+```{r}
+plot(data$time_study, data$Marks,
+     xlab = "Study Time (hours)",
+     ylab = "Marks",
+     main = "Scatter Plot: Marks vs Study Time",
+     pch = 19)
+```
+
+*Comments*: The trend is obvious - with the rise of study time, values of marks also increase. An approximately linear relationship is observed, which allows the application of linear regression
+
+**(b)**
+
+```{r}
+model <- lm(Marks ~ time_study, data = data)
+summary(model)
+coef(model)
+```
+
+Visualization:
+
+```{r}
+plot(data$time_study, data$Marks,
+     xlab = "Study Time (hours)",
+     ylab = "Marks",
+     pch = 19,
+     main = "Regression Line")
+
+abline(model, col = "red", lwd = 2.5)
+```
+
+To find the regression equation, we look for a straight line that best describes the relationship between study time (X) and marks (Y). The line has the form:\
+Y = a + bx,\
+where a is an intercept and b is a slope.\
+We get these values by using *least squares method*.
+
+**(c)**
+
+The model fits the data very well.\
+The R-squared is 0.8878, which means that about 88.8% of the variation in marks is explained by study time.\
+The Residual Standard Error (RSE) is 4.82, meaning that, on average, the predictions differ from the actual marks by about 4–5 points.\
+For real-life data, this is reasonably accurate.\
+The F-statistic is 775.8 with a p-value below 2e-16, which shows that the overall regression model is highly significant.\
+In other words, the linear relationship is not due to some random chance.\
+Overall, the regression line provides a very good fit to the data.
+
+**(d)**
+
+We test whether the slope (the coefficient of `time_study`) is equal to zero.
+
+-   **H₀:** a = 0
+
+    **H₁:** a != 0
+
+This is a **t-test** on the slope coefficient.
+
+So the test statistic is:
+
+t = estimate / SE
+
+From summary we saw earlier we already know these values, so let's plug them in.
+
+t = 27.853.
+
+As R shows - the p-value is extremely small - practically zero.
+
+Since the p-value is far below 0.05, we **reject H₀**.
+
+Study time **is highly significant** in predicting marks.
+
+**(e)** Using the regression equation Y = a + bx, we can plug in x = 8.\
+Y = 46.733858.
+
+We can also do the same using R function:
+
+```{r}
+predict(model, newdata = data.frame(time_study = 8))
+```
+
+**(f)**
+
+First thing we can do is to use more predictors (if we had them), such as for example *hours of sleep*, or *course difficulty*.\
+Also, as we can see from the plot earlier our data has slight curvature, so allowing non-linear relationship should be a good idea.
