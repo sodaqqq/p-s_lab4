@@ -7,7 +7,7 @@ output: html_notebook
 
 ## Team
 
-*Vladyslav Vasylchenko, Max Golovin, Ostap Kostiuk*
+*Vladyslav Vasylchenko, Max Holovin, Ostap Kostiuk*
 
 ## Work distribution
 
@@ -221,7 +221,7 @@ Interpretation:
 
 • If $p\text{-value} \ge 0.05$, we do not reject $H_0$. In this case, the observed data do not provide sufficient evidence to claim that $\sigma_1^2 > \sigma_2^2$.
 
-## Task 3
+## Problem 3
 
 The problem asks to check distribution properties of the generated samples using the Kolmogorov–Smirnov (KS) test.\
 
@@ -311,7 +311,7 @@ print(ks_test_c)
 Since our p-value(0.4287) is \> 0.05, we can't reject $H_0$\
 Both samples $\mathbf{x}$ and $\mathbf{y}$ are generated using the exact same $\Phi^{-1}$ transformation applied to non-overlapping segments of the same underlying pseudo-random sequence $\{a_k\}$. Therefore, they are drawn from the same underlying theoretical distribution (Standard Normal). The two-sample KS test correctly concludes that the small differences between the samples are likely due to sampling variability and not a fundamental difference in their underlying distributions.\
 
-# Task 4
+# Problem 4
 
 ## Problem statement
 
